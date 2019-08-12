@@ -8,7 +8,7 @@ public class Pieces : MonoBehaviour
     string tagChessBoard = "Table";
 
     public static float BOARD_X_MIN = -50.2f;
-    public static float BOARD_X_MAX = 43.3f;
+    public static float BOARD_X_MAX = 48f; //43.3f;
     public static float BOARD_Y_MIN = -55.5f;
     public static float BOARD_Y_MAX = 43.3f;
     public static float FIELD_X = (BOARD_X_MAX - BOARD_X_MIN) / 8;
@@ -98,6 +98,25 @@ public class Pieces : MonoBehaviour
 
     }
 
+    Vector2Int getField(Vector2 coord)
+    {
+        coord.x = (coord.x - BOARD_X_MIN) / FIELD_X;
+        coord.y = (coord.y - BOARD_Y_MIN) / FIELD_Y;
+        int x = Mathf.FloorToInt(coord.x);
+        Debug.Log(coord.y);
+        int y = Mathf.FloorToInt(coord.y);
+        return new Vector2Int(x, y);
+
+    }
+
+    Vector2 getFieldPos(Vector2Int field)
+    {
+        Vector2 fieldPos = new Vector2();
+        fieldPos.x = BOARD_X_MIN + FIELD_X / 2 + field.x * FIELD_X;
+        fieldPos.y = BOARD_Y_MIN + FIELD_Y / 2 + field.y * FIELD_Y;
+        return fieldPos;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -116,7 +135,14 @@ public class Pieces : MonoBehaviour
                 if (hit.transform.name.Equals(tagChessBoard))
                 {
                     Debug.Log(hit.point.ToString());
-                    whitePieces[11].transform.position = hit.point;
+                    //whitePieces[11].transform.position = hit.point;
+                    Vector2Int field = getField(new Vector2(hit.point.x, hit.point.z));
+                    Debug.Log("hit: x: " + hit.point.x + " y: " + hit.point.z);
+                    Debug.Log("x: " + field.x + " y: " + field.y);
+
+                    var fieldHighlighter = gameObject.transform.Find("fieldHighlighter");
+                    Vector2 fieldPos = getFieldPos(field);
+                    fieldHighlighter.transform.position = new Vector3(fieldPos.x, fieldHighlighter.position.y, fieldPos.y);
                 }
             }
         }
