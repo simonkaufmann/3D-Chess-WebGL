@@ -103,7 +103,6 @@ public class Pieces : MonoBehaviour
         coord.x = (coord.x - BOARD_X_MIN) / FIELD_X;
         coord.y = (coord.y - BOARD_Y_MIN) / FIELD_Y;
         int x = Mathf.FloorToInt(coord.x);
-        Debug.Log(coord.y);
         int y = Mathf.FloorToInt(coord.y);
         return new Vector2Int(x, y);
 
@@ -137,8 +136,6 @@ public class Pieces : MonoBehaviour
                     Debug.Log(hit.point.ToString());
                     //whitePieces[11].transform.position = hit.point;
                     Vector2Int field = getField(new Vector2(hit.point.x, hit.point.z));
-                    Debug.Log("hit: x: " + hit.point.x + " y: " + hit.point.z);
-                    Debug.Log("x: " + field.x + " y: " + field.y);
 
                     var fieldHighlighter = gameObject.transform.Find("fieldHighlighter");
                     Vector2 fieldPos = getFieldPos(field);
