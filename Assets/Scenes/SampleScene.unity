@@ -788,7 +788,7 @@ GameObject:
   - component: {fileID: 2023110449}
   - component: {fileID: 2023110448}
   m_Layer: 0
-  m_Name: fieldHighlighter
+  m_Name: blueprintFieldHighlighter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

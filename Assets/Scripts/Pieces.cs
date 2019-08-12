@@ -7,12 +7,10 @@ public class Pieces : MonoBehaviour
 
     string tagChessBoard = "Table";
 
-    public static float BOARD_X_MIN = -50.2f;
-    public static float BOARD_X_MAX = 48.5f; //43.3f;
-    public static float BOARD_Y_MIN = -55.5f;
-    public static float BOARD_Y_MAX = 43.3f;
-    public static float FIELD_X = (BOARD_X_MAX - BOARD_X_MIN) / 8;
-    public static float FIELD_Y = (BOARD_Y_MAX - BOARD_Y_MIN) / 8;
+    Piece[] whitePieces;
+    Piece[] blackPieces;
+
+    Field[,] fields;
 
     public static string[] namesWhitePieces =
     {
@@ -54,71 +52,92 @@ public class Pieces : MonoBehaviour
         "bRook2"
     };
 
-    GameObject[] whitePieces;
-    GameObject[] blackPieces;
-
-    // Start is called before the first frame update
-    void Start()
+    void setFieldStartingPosition(Field[,] fields)
     {
-        whitePieces = new GameObject[namesWhitePieces.Length];
-        blackPieces = new GameObject[namesBlackPieces.Length];
+        for (int i = 0; i < fields.GetLength(1); i++)
+        {
+            fields[0, i].no = i + 8;
+            fields[0, i].player = Field.WHITE;
 
+            fields[1, i].no = i;
+            fields[1, i].player = Field.WHITE;
+
+            fields[6, i].no = 7 - i;
+            fields[6, i].player = Field.BLACK;
+
+            fields[7, i].no = 15 - i;
+            fields[7, i].player = Field.BLACK;
+        }
+    }
+
+    void initialiseFields(Field[,] fields)
+    {
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
+                fields[i, j] = new Field(i, j);
+            }
+        }
+    }
+
+    void initialisePieces(Piece[] whitePieces, Piece[] blackPieces)
+    {
         for (int i = 0; i < namesWhitePieces.Length; i++)
         {
-            whitePieces[i] = new GameObject();
-            float xCoord = BOARD_X_MIN + FIELD_X / 2 + FIELD_X * (i % 8);
+            whitePieces[i] = new Piece();
+            float xCoord = Field.BOARD_X_MIN + Field.FIELD_X / 2 + Field.FIELD_X * (i % Field.FIELDS_X);
             float zCoord;
             if (i < 8)
-                zCoord = BOARD_Y_MIN + FIELD_Y * 3 / 2;
+                zCoord = Field.BOARD_Y_MIN + Field.FIELD_Y * 3 / 2;
             else
-                zCoord = BOARD_Y_MIN + FIELD_Y / 2;
-            whitePieces[i].transform.position = new Vector3(xCoord, 0, zCoord);
-            whitePieces[i].transform.parent = gameObject.transform.Find("chessBoard");
-            whitePieces[i].name = "parent_" + namesWhitePieces[i];
-            GameObject.Find(namesWhitePieces[i]).transform.SetParent(whitePieces[i].transform);
+                zCoord = Field.BOARD_Y_MIN + Field.FIELD_Y / 2;
+            whitePieces[i].gameObject.transform.position = new Vector3(xCoord, 0, zCoord);
+            whitePieces[i].gameObject.transform.parent = gameObject.transform.Find("chessBoard");
+            whitePieces[i].gameObject.name = "parent_" + namesWhitePieces[i];
+            GameObject.Find(namesWhitePieces[i]).transform.SetParent(whitePieces[i].gameObject.transform);
         }
 
         for (int i = 0; i < namesBlackPieces.Length; i++)
         {
-            blackPieces[i] = new GameObject();
-            float xCoord = BOARD_X_MAX - FIELD_X / 2 - FIELD_X * (i % 8);
+            blackPieces[i] = new Piece();
+            float xCoord = Field.BOARD_X_MAX - Field.FIELD_X / 2 - Field.FIELD_X * (i % Field.FIELDS_X);
             float zCoord;
             if (i < 8)
-                zCoord = BOARD_Y_MAX - FIELD_Y * 3 / 2;
+                zCoord = Field.BOARD_Y_MAX - Field.FIELD_Y * 3 / 2;
             else
-                zCoord = BOARD_Y_MAX - FIELD_Y / 2;
-            blackPieces[i].transform.position = new Vector3(xCoord, 0, zCoord);
-            blackPieces[i].transform.parent = gameObject.transform.Find("chessBoard");
-            blackPieces[i].name = "parent_" + namesBlackPieces[i];
-            GameObject.Find(namesBlackPieces[i]).transform.SetParent(blackPieces[i].transform);
+                zCoord = Field.BOARD_Y_MAX - Field.FIELD_Y / 2;
+            blackPieces[i].gameObject.transform.position = new Vector3(xCoord, 0, zCoord);
+            blackPieces[i].gameObject.transform.parent = gameObject.transform.Find("chessBoard");
+            blackPieces[i].gameObject.name = "parent_" + namesBlackPieces[i];
+            GameObject.Find(namesBlackPieces[i]).transform.SetParent(blackPieces[i].gameObject.transform);
         }
-
-        var rend = whitePieces[11].transform.GetChild(0).GetComponent<Renderer>();
-        rend.material.color = Color.red;
-
     }
 
-    Vector2Int? getField(Vector2 coord)
+    // Start is called before the first frame update
+    void Start()
     {
-        coord.x = (coord.x - BOARD_X_MIN) / FIELD_X;
-        coord.y = (coord.y - BOARD_Y_MIN) / FIELD_Y;
-        int x = Mathf.FloorToInt(coord.x);
-        int y = Mathf.FloorToInt(coord.y);
+        GameObject.Find("blueprintFieldHighlighter").GetComponent<Renderer>().enabled = false;
 
-        if (x >= 0 && x <= 7 && y >= 0 && y <= 7)
+        whitePieces = new Piece[namesWhitePieces.Length];
+        blackPieces = new Piece[namesBlackPieces.Length];
+
+        fields = new Field[8, 8];
+
+        initialiseFields(fields);
+
+        setFieldStartingPosition(fields);
+
+        initialisePieces(whitePieces, blackPieces);
+    }
+
+    void highlightField(Vector2Int field)
+    {
+        foreach (Field f in fields)
         {
-            return new Vector2Int(x, y);
+            f.highlight1 = false;
         }
-
-        return null;
-    }
-
-    Vector2 getFieldPos(Vector2Int field)
-    {
-        Vector2 fieldPos = new Vector2();
-        fieldPos.x = BOARD_X_MIN + FIELD_X / 2 + field.x * FIELD_X;
-        fieldPos.y = BOARD_Y_MIN + FIELD_Y / 2 + field.y * FIELD_Y;
-        return fieldPos;
+        fields[field.x, field.y].highlight1 = true;
     }
 
     // Update is called once per frame
@@ -135,14 +154,11 @@ public class Pieces : MonoBehaviour
         {
             if (h.transform.name.Equals(tagChessBoard))
             {
-                Vector2Int? field = getField(new Vector2(h.point.x, h.point.z));
+                Vector2Int? field = Field.getField(new Vector2(h.point.x, h.point.z));
 
                 if (field != null)
                 {
-                    var fieldHighlighter = gameObject.transform.Find("fieldHighlighter");
-                    Vector2 fieldPos = getFieldPos((Vector2Int) field);
-                    fieldPos3 = new Vector3(fieldPos.x, fieldHighlighter.position.y, fieldPos.y);
-                    fieldHighlighter.transform.position = new Vector3(fieldPos.x, fieldHighlighter.position.y, fieldPos.y);
+                    highlightField((Vector2Int) field);
                 }
             }
         }
@@ -157,7 +173,7 @@ public class Pieces : MonoBehaviour
 
             if (fieldPos3 != null)
             {
-                whitePieces[11].transform.position = (Vector3) fieldPos3;
+                whitePieces[11].gameObject.transform.position = (Vector3) fieldPos3;
             }
         }
 
