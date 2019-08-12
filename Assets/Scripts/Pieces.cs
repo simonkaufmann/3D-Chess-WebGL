@@ -40,5 +40,7 @@ public class Pieces : MonoBehaviour
                 }
             }
         }
+        Debug.DrawLine(new Vector3(-50.2f, -0.4f, 0), new Vector3(48.375f, -0.4f, 0), Color.green);
+        Debug.DrawLine(new Vector3(0, -0.4f, -55.5f), new Vector3(0, -0.4f, 43.3f), Color.blue);
     }
 }
