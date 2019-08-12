@@ -67,10 +67,6 @@ public class Pieces : MonoBehaviour
         {
             whitePieces[i] = new GameObject();
             float xCoord = BOARD_X_MIN + FIELD_X / 2 + FIELD_X * (i % 8);
-            if (namesWhitePieces[i].Equals("wQueen"))
-            {
-                Debug.Log("xCoord: " + xCoord);
-            }
             float zCoord;
             if (i < 8)
                 zCoord = BOARD_Y_MIN + FIELD_Y * 3 / 2;
@@ -107,7 +103,6 @@ public class Pieces : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("mouse down");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -120,7 +115,6 @@ public class Pieces : MonoBehaviour
             {
                 if (hit.transform.name.Equals(tagChessBoard))
                 {
-                    Debug.Log("Table");
                     Debug.Log(hit.point.ToString());
                     whitePieces[11].transform.position = hit.point;
                 }
