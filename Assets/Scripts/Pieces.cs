@@ -8,7 +8,7 @@ public class Pieces : MonoBehaviour
     string tagChessBoard = "Table";
 
     public static float BOARD_X_MIN = -50.2f;
-    public static float BOARD_X_MAX = 48f; //43.3f;
+    public static float BOARD_X_MAX = 48.5f; //43.3f;
     public static float BOARD_Y_MIN = -55.5f;
     public static float BOARD_Y_MAX = 43.3f;
     public static float FIELD_X = (BOARD_X_MAX - BOARD_X_MIN) / 8;
@@ -98,14 +98,19 @@ public class Pieces : MonoBehaviour
 
     }
 
-    Vector2Int getField(Vector2 coord)
+    Vector2Int? getField(Vector2 coord)
     {
         coord.x = (coord.x - BOARD_X_MIN) / FIELD_X;
         coord.y = (coord.y - BOARD_Y_MIN) / FIELD_Y;
         int x = Mathf.FloorToInt(coord.x);
         int y = Mathf.FloorToInt(coord.y);
-        return new Vector2Int(x, y);
 
+        if (x >= 0 && x <= 7 && y >= 0 && y <= 7)
+        {
+            return new Vector2Int(x, y);
+        }
+
+        return null;
     }
 
     Vector2 getFieldPos(Vector2Int field)
@@ -119,30 +124,43 @@ public class Pieces : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hit;
+
+        Vector3? fieldPos3 = null;
+
+        hit = Physics.RaycastAll(ray);
+        foreach (RaycastHit h in hit)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
+            if (h.transform.name.Equals(tagChessBoard))
             {
-                Debug.Log(hit.transform.name);
-            }
+                Vector2Int? field = getField(new Vector2(h.point.x, h.point.z));
 
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform.name.Equals(tagChessBoard))
+                if (field != null)
                 {
-                    Debug.Log(hit.point.ToString());
-                    //whitePieces[11].transform.position = hit.point;
-                    Vector2Int field = getField(new Vector2(hit.point.x, hit.point.z));
-
                     var fieldHighlighter = gameObject.transform.Find("fieldHighlighter");
-                    Vector2 fieldPos = getFieldPos(field);
+                    Vector2 fieldPos = getFieldPos((Vector2Int) field);
+                    fieldPos3 = new Vector3(fieldPos.x, fieldHighlighter.position.y, fieldPos.y);
                     fieldHighlighter.transform.position = new Vector3(fieldPos.x, fieldHighlighter.position.y, fieldPos.y);
                 }
             }
         }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit h;
+            if (Physics.Raycast(ray, out h))
+            {
+                Debug.Log(h.transform.name);
+            }
+
+            if (fieldPos3 != null)
+            {
+                whitePieces[11].transform.position = (Vector3) fieldPos3;
+            }
+        }
+
         Debug.DrawLine(new Vector3(-50.2f, -0.4f, 0), new Vector3(48.375f, -0.4f, 0), Color.green);
         Debug.DrawLine(new Vector3(0, -0.4f, -55.5f), new Vector3(0, -0.4f, 43.3f), Color.blue);
     }
