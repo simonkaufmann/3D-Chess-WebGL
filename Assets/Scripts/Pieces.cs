@@ -35,7 +35,8 @@ public class Pieces : MonoBehaviour
                 if (hit.transform.name.Equals(tagChessBoard))
                 {
                     Debug.Log("Table");
-                    wQueen.transform.position = hit.point;
+                    Debug.Log(hit.point.ToString());
+                    wQueen.transform.localPosition = hit.point;
                 }
             }
         }
