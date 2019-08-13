@@ -44,10 +44,10 @@ public class Pieces : MonoBehaviour
         "bPawn8",
         "bRook1",
         "bKnight1",
-        "bBishopW",
+        "bBishopB",
         "bKing",
         "bQueen",
-        "bBishopB",
+        "bBishopW",
         "bKnight2",
         "bRook2"
     };
@@ -56,17 +56,22 @@ public class Pieces : MonoBehaviour
     {
         for (int i = 0; i < fields.GetLength(1); i++)
         {
-            fields[0, i].no = i + 8;
-            fields[0, i].player = Field.WHITE;
+            fields[i, 0].no = i + 8;
+            fields[i, 0].player = Field.WHITE;
 
-            fields[1, i].no = i;
-            fields[1, i].player = Field.WHITE;
+            fields[i, 1].no = i;
+            fields[i, 1].player = Field.WHITE;
 
-            fields[6, i].no = 7 - i;
-            fields[6, i].player = Field.BLACK;
+            for (int j = 2; j < 6; j++)
+            {
+                fields[i, j].player = Field.EMPTY;
+            }
 
-            fields[7, i].no = 15 - i;
-            fields[7, i].player = Field.BLACK;
+            fields[i, 6].no = 7 - i;
+            fields[i, 6].player = Field.BLACK;
+
+            fields[i, 7].no = 15 - i;
+            fields[i, 7].player = Field.BLACK;
         }
     }
 
@@ -131,19 +136,118 @@ public class Pieces : MonoBehaviour
         initialisePieces(whitePieces, blackPieces);
     }
 
-    void highlightField(Vector2Int field)
+    void highlightField(Field field)
     {
         foreach (Field f in fields)
         {
             f.highlight1 = false;
         }
-        fields[field.x, field.y].highlight1 = true;
+        field.highlight1 = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    void highlightPiece(Field field)
     {
+        foreach (Piece p in whitePieces)
+        {
+            p.highlight1 = false;
+        }
 
+        foreach (Piece p in blackPieces)
+        {
+            p.highlight1 = false;
+        }
+
+        if (field.player == Field.WHITE)
+        {
+            whitePieces[field.no].highlight1 = true;
+        } else if (field.player == Field.BLACK)
+        {
+            blackPieces[field.no].highlight1 = true;
+        }
+    }
+
+    bool isPiece(string str)
+    {
+        bool contained = false;
+        foreach (string s in namesWhitePieces)
+        {
+            if (s.Equals(str))
+            {
+                contained = true;
+            }
+        }
+
+        foreach (string s in namesBlackPieces)
+        {
+            if (s.Equals(str))
+            {
+                contained = true;
+            }
+        }
+
+        return contained;
+    }
+
+    Piece getPiece(string str)
+    {
+        foreach (Piece p in whitePieces)
+        {
+            if (p.gameObject.transform.GetChild(0).transform.name.Equals(str))
+            {
+                return p;
+            }
+        }
+
+        foreach(Piece p in blackPieces)
+        {
+            if (p.gameObject.transform.GetChild(0).transform.name.Equals(str))
+            {
+                return p;
+            }
+        }
+
+        return null;
+    }
+
+    Field getFieldByPiece()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (isPiece(hit.transform.name))
+            {
+                Piece p = getPiece(hit.transform.name);
+
+                foreach (Field f in fields)
+                {
+                    Piece pieceField = null;
+                    if (f.player == Field.WHITE)
+                    {
+                        pieceField = whitePieces[f.no];
+                    } else if (f.player == Field.BLACK)
+                    {
+                        pieceField = blackPieces[f.no];
+                    }
+
+                    if (Object.ReferenceEquals(p, pieceField))
+                    {
+                        return f;
+                    }
+                }
+
+                return null;
+            } else
+            {
+                return getFieldByField();
+            }
+        }
+        return null;
+    }
+
+    Field getFieldByField()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hit;
 
@@ -158,12 +262,27 @@ public class Pieces : MonoBehaviour
 
                 if (field != null)
                 {
-                    highlightField((Vector2Int) field);
+                    return fields[((Vector2Int)field).x, ((Vector2Int)field).y];
                 }
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        return null;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        Field f = getFieldByPiece();
+        if (f != null)
+        {
+            highlightField(f);
+            highlightPiece(f);
+        }
+
+
+        /*if (Input.GetMouseButtonDown(0))
         {
             RaycastHit h;
             if (Physics.Raycast(ray, out h))
@@ -175,7 +294,7 @@ public class Pieces : MonoBehaviour
             {
                 whitePieces[11].gameObject.transform.position = (Vector3) fieldPos3;
             }
-        }
+        }*/
 
         Debug.DrawLine(new Vector3(-50.2f, -0.4f, 0), new Vector3(48.375f, -0.4f, 0), Color.green);
         Debug.DrawLine(new Vector3(0, -0.4f, -55.5f), new Vector3(0, -0.4f, 43.3f), Color.blue);

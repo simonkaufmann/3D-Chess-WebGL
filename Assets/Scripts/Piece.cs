@@ -58,7 +58,7 @@ public class Piece
     void updateHighlight()
     {
         var rend = gameObject.transform.GetChild(0).GetComponent<Renderer>();
-        if (highlight1 || highlight2 || highlight3)
+        if (_highlight1 || _highlight2 || _highlight3)
         {
             rend.material.color = Color.red;
         } else

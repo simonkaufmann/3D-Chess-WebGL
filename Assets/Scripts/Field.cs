@@ -73,7 +73,7 @@ public class Field
     void updateHighlight()
     {
         var rend = fieldHighlighter.GetComponent<Renderer>();
-        if (highlight1 || highlight2 || highlight3)
+        if (_highlight1 || _highlight2 || _highlight3)
         {
             rend.enabled = true;
         } else
@@ -105,7 +105,7 @@ public class Field
         return fieldPos;
     }
 
-    public Field(int row, int col)
+    public Field(int col, int row)
     {
         this.row = row;
         this.col = col;
@@ -120,7 +120,7 @@ public class Field
         var rend = fieldHighlighter.GetComponent<Renderer>();
         rend.enabled = false;
 
-        Vector2 fieldPos = getFieldPos(new Vector2Int(row, col));
+        Vector2 fieldPos = getFieldPos(new Vector2Int(col, row));
         Vector3 fieldPos3 = new Vector3(fieldPos.x, fieldHighlighter.transform.position.y, fieldPos.y);
         fieldHighlighter.transform.position = new Vector3(fieldPos.x, fieldHighlighter.transform.position.y, fieldPos.y);
     }
