@@ -12,6 +12,8 @@ public class Pieces : MonoBehaviour
 
     Field[,] fields;
 
+    Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
+
     public static string[] namesWhitePieces =
     {
         "wPawn1",
@@ -297,6 +299,11 @@ public class Pieces : MonoBehaviour
 
     List<Field> getPawnMoves(int player, Field f)
     {
+        return getPawnMoves(player, f, false);
+    }
+
+    List<Field> getPawnMoves(int player, Field f, bool threatened)
+    {
         List<Field> fs = new List<Field>();
         int row = f.row;
         int col = f.col;
@@ -304,35 +311,72 @@ public class Pieces : MonoBehaviour
         {
             if (row + 1 < Field.FIELDS_Y)
             {
-                if (fields[col, row + 1].player == Field.EMPTY)
+                if (fields[col, row + 1].player == Field.EMPTY && !threatened)
                 {
                     fs.Add(fields[col, row + 1]);
+
+                    if (row == 1)
+                    {
+                        if (fields[col, row + 2].player == Field.EMPTY && !threatened)
+                        {
+                            fs.Add(fields[col, row + 2]);
+                        }
+                    }
                 }
 
-                if (col > 0)
+                if (col - 1 > 0)
                 {
-                    if (fields[col - 1, row + 1].player == Field.BLACK)
+                    if (fields[col - 1, row + 1].player == Field.BLACK || threatened)
                     {
                         fs.Add(fields[col - 1, row + 1]);
                     }
                 }
-                if (col < Field.FIELDS_X)
+
+                if (col + 1 < Field.FIELDS_X)
                 {
-                    if (fields[col + 1, row + 1].player == Field.BLACK)
+                    if (fields[col + 1, row + 1].player == Field.BLACK || threatened)
                     {
                         fs.Add(fields[col + 1, row + 1]);
                     }
                 }
             }
+        }
 
-            if (row == 1)
+        if (player == Field.BLACK)
+        {
+            if (row - 1 >= 0)
             {
-                if (fields[col, row + 2].player == Field.EMPTY)
+                if (fields[col, row - 1].player == Field.EMPTY && !threatened)
                 {
-                    fs.Add(fields[col, row + 2]);
+                    fs.Add(fields[col, row - 1]);
+
+                    if (row == 6)
+                    {
+                        if (fields[col, row - 2].player == Field.EMPTY && !threatened)
+                        {
+                            fs.Add(fields[col, row - 2]);
+                        }
+                    }
+                }
+
+                if (col - 1 > 0)
+                {
+                    if (fields[col - 1, row - 1].player == Field.WHITE || threatened)
+                    {
+                        fs.Add(fields[col - 1, row - 1]);
+                    }
+                }
+
+                if (col + 1 < Field.FIELDS_X)
+                {
+                    if (fields[col + 1, row - 1].player == Field.WHITE || threatened)
+                    {
+                        fs.Add(fields[col + 1, row - 1]);
+                    }
                 }
             }
         }
+
         return fs;
     }
 
@@ -442,6 +486,8 @@ public class Pieces : MonoBehaviour
             c++;
         }
 
+        r = row - 1;
+        c = col - 1;
         while (r >= 0 && c >= 0)
         {
             if (fields[c, r].player == Field.EMPTY)
@@ -460,6 +506,8 @@ public class Pieces : MonoBehaviour
             c--;
         }
 
+        r = row - 1;
+        c = col + 1;
         while (r >= 00 && c < Field.FIELDS_X)
         {
             if (fields[c, r].player == Field.EMPTY)
@@ -478,6 +526,8 @@ public class Pieces : MonoBehaviour
             c++;
         }
 
+        r = row + 1;
+        c = col - 1;
         while (r < Field.FIELDS_Y && c >= 0)
         {
             if (fields[c, r].player == Field.EMPTY)
@@ -600,7 +650,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.BLACK)
                 {
-                    allMoves.AddRange(getMoves(f, false));
+                    allMoves.AddRange(getMoves(f, true));
 
 
                     if (pieceIsType(getPiece(f), "King"))
@@ -612,7 +662,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.WHITE)
                 {
-                    allMoves.AddRange(getMoves(f, false));
+                    allMoves.AddRange(getMoves(f, true));
                     
                     if (pieceIsType(getPiece(f), "King"))
                     {
@@ -717,13 +767,13 @@ public class Pieces : MonoBehaviour
 
     List<Field> getMoves(Field f)
     {
-        return getMoves(f, true);
+        return getMoves(f, false);
     }
 
-    List<Field> getMoves(Field f, bool kingMoves)
+    List<Field> getMoves(Field f, bool threatened)
     {
         List<Field> fs = new List<Field>();
-
+ 
         Piece p = getPiece(f);
         if (p == null)
         {
@@ -732,7 +782,7 @@ public class Pieces : MonoBehaviour
 
         if (pieceIsType(p, "Pawn"))
         {
-            fs = getPawnMoves(f.player, f);
+            fs = getPawnMoves(f.player, f, threatened);
         }
         else if (pieceIsType(p, "Rook"))
         {
@@ -755,7 +805,7 @@ public class Pieces : MonoBehaviour
         }
         else if (pieceIsType(p, "King"))
         {
-            if (!kingMoves)
+            if (threatened)
             {
                 return fs;
             }
@@ -763,6 +813,24 @@ public class Pieces : MonoBehaviour
             {
                 fs = getKingMoves(f.player, f);
             }
+        }
+
+        List<Field> removals = new List<Field>();
+        foreach (Field field in fs)
+        {
+            if (field.player != Field.EMPTY)
+            {
+                Piece piece = getPiece(field);
+                if (pieceIsType(piece, "King"))
+                {
+                    removals.Add(field);
+                }
+            }
+        }
+
+        foreach (Field field in removals)
+        {
+            fs.Remove(field);
         }
 
         return fs;
@@ -786,11 +854,31 @@ public class Pieces : MonoBehaviour
             selectedField = f;
         }
 
-        if (f.player == Field.WHITE)
+        if (f.player == Field.WHITE || f.player == Field.BLACK)
         {
             List<Field> fs = getMoves(f);
             highlight2Fields(fs);
         }
+    }
+
+    void movePiece(Field f1, Field f2)
+    {
+        Piece p = getPiece(f1);
+        Vector2 pos = Field.getFieldPos(new Vector2Int(f2.col, f2.row));
+
+        if (f2.player != Field.EMPTY)
+        {
+            Piece p2 = getPiece(f2);
+            GameObject p2go = p2.gameObject;
+            p2go.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p2go.transform.position.y, POSITION_OFF_SCREEN.y);
+        }
+
+        GameObject go = p.gameObject;
+        go.transform.position = new Vector3(pos.x, go.transform.position.y, pos.y);
+
+        f2.player = f1.player;
+        f2.no = f1.no;
+        f1.player = Field.EMPTY;
     }
 
     // Update is called once per frame
@@ -813,6 +901,14 @@ public class Pieces : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Field f = getFieldByField();
+
+                List<Field> allMoves = getMoves(selectedField);
+                if (allMoves.Contains(f))
+                {
+                    movePiece(selectedField, f);
+                }
+
                 selectField(null);
             }
         }
