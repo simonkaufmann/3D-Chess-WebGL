@@ -52,6 +52,8 @@ public class Pieces : MonoBehaviour
         "bRook2"
     };
 
+    Field selectedField = null;
+
     void setFieldStartingPosition(Field[,] fields)
     {
         for (int i = 0; i < fields.GetLength(1); i++)
@@ -157,12 +159,10 @@ public class Pieces : MonoBehaviour
             p.highlight1 = false;
         }
 
-        if (field.player == Field.WHITE)
+        Piece piece = getPiece(field);
+        if (piece != null)
         {
-            whitePieces[field.no].highlight1 = true;
-        } else if (field.player == Field.BLACK)
-        {
-            blackPieces[field.no].highlight1 = true;
+            piece.highlight1 = true;
         }
     }
 
@@ -209,6 +209,19 @@ public class Pieces : MonoBehaviour
         return null;
     }
 
+    Piece getPiece(Field f)
+    {
+        if (f.player == Field.WHITE)
+        {
+            return (whitePieces[f.no]);
+        }
+        else if (f.player == Field.BLACK)
+        {
+            return (blackPieces[f.no]);
+        }
+        return null;
+    }
+
     Field getFieldByPiece()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -222,14 +235,7 @@ public class Pieces : MonoBehaviour
 
                 foreach (Field f in fields)
                 {
-                    Piece pieceField = null;
-                    if (f.player == Field.WHITE)
-                    {
-                        pieceField = whitePieces[f.no];
-                    } else if (f.player == Field.BLACK)
-                    {
-                        pieceField = blackPieces[f.no];
-                    }
+                    Piece pieceField = getPiece(f);
 
                     if (Object.ReferenceEquals(p, pieceField))
                     {
@@ -270,31 +276,546 @@ public class Pieces : MonoBehaviour
         return null;
     }
 
+    bool pieceIsType(Piece p, string type)
+    {
+        if (p.gameObject.transform.GetChild(0).transform.name.Contains(type))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    void highlight2Fields(List<Field> fs)
+    {
+        foreach (Field f in fs)
+        {
+            f.highlight2 = true;
+        }
+    }
+
+    List<Field> getPawnMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+        int row = f.row;
+        int col = f.col;
+        if (player == Field.WHITE)
+        {
+            if (row + 1 < Field.FIELDS_Y)
+            {
+                if (fields[col, row + 1].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col, row + 1]);
+                }
+
+                if (col > 0)
+                {
+                    if (fields[col - 1, row + 1].player == Field.BLACK)
+                    {
+                        fs.Add(fields[col - 1, row + 1]);
+                    }
+                }
+                if (col < Field.FIELDS_X)
+                {
+                    if (fields[col + 1, row + 1].player == Field.BLACK)
+                    {
+                        fs.Add(fields[col + 1, row + 1]);
+                    }
+                }
+            }
+
+            if (row == 1)
+            {
+                if (fields[col, row + 2].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col, row + 2]);
+                }
+            }
+        }
+        return fs;
+    }
+
+    List<Field> getHorizontalMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+        int row = f.row;
+        int col = f.col;
+
+        for (int c = col + 1; c < Field.FIELDS_X; c++)
+        {
+            if (fields[c, row].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, row]);
+            }
+            else
+            {
+                if (fields[c, row].player != player)
+                {
+                    fs.Add(fields[c, row]);
+                }
+                break;
+            }
+        }
+
+        for (int c = col - 1; c >= 0; c--)
+        {
+            if (fields[c, row].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, row]);
+            }
+            else
+            {
+                if (fields[c, row].player != player)
+                {
+                    fs.Add(fields[c, row]);
+                }
+                break;
+            }
+        }
+        return fs;
+    }
+
+    List<Field> getVerticalMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+        int row = f.row;
+        int col = f.col;
+
+        for (int r = row + 1; r < Field.FIELDS_Y; r++)
+        {
+            if (fields[col, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[col, r]);
+            }
+            else
+            {
+                if (fields[col, r].player != player)
+                {
+                    fs.Add(fields[col, r]);
+                }
+                break;
+            }
+        }
+
+        for (int r = row - 1; r >= 0; r--)
+        {
+            if (fields[col, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[col, r]);
+            }
+            else
+            {
+                if (fields[col, r].player != player)
+                {
+                    fs.Add(fields[col, r]);
+                }
+                break;
+            }
+        }
+        return fs;
+    }
+
+    List<Field> getDiagonalMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+        int row = f.row;
+        int col = f.col;
+
+        int r = row + 1;
+        int c = col + 1;
+        while (r < Field.FIELDS_Y && c < Field.FIELDS_X)
+        {
+            if (fields[c, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, r]);
+            }
+            else
+            {
+                if (fields[c, r].player != player)
+                {
+                    fs.Add(fields[c, r]);
+                }
+                break;
+            }
+            r++;
+            c++;
+        }
+
+        while (r >= 0 && c >= 0)
+        {
+            if (fields[c, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, r]);
+            }
+            else
+            {
+                if (fields[c, r].player != player)
+                {
+                    fs.Add(fields[c, r]);
+                }
+                break;
+            }
+            r--;
+            c--;
+        }
+
+        while (r >= 00 && c < Field.FIELDS_X)
+        {
+            if (fields[c, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, r]);
+            }
+            else
+            {
+                if (fields[c, r].player != player)
+                {
+                    fs.Add(fields[c, r]);
+                }
+                break;
+            }
+            r--;
+            c++;
+        }
+
+        while (r < Field.FIELDS_Y && c >= 0)
+        {
+            if (fields[c, r].player == Field.EMPTY)
+            {
+                fs.Add(fields[c, r]);
+            }
+            else
+            {
+                if (fields[c, r].player != player)
+                {
+                    fs.Add(fields[c, r]);
+                }
+                break;
+            }
+            r++;
+            c--;
+        }
+        return fs;
+    }
+
+    List<Field> getKnightMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+        int row = f.row;
+        int col = f.col;
+
+        if (row + 2 < Field.FIELDS_Y)
+        {
+            if (col + 1 < Field.FIELDS_X)
+            {
+                if (fields[col + 1, row + 2].player != player)
+                {
+                    fs.Add(fields[col + 1, row + 2]);
+                }
+            }
+            if (col - 1 >= 0)
+            {
+                if (fields[col - 1, row + 2].player != player)
+                {
+                    fs.Add(fields[col - 1, row + 2]);
+                }
+            }
+        }
+
+        if (row - 2 >= 0)
+        {
+            if (col + 1 < Field.FIELDS_X)
+            {
+                if (fields[col + 1, row - 2].player != player)
+                {
+                    fs.Add(fields[col + 1, row - 2]);
+                }
+            }
+            if (col - 1 >= 0)
+            {
+                if (fields[col - 1, row - 2].player != player)
+                {
+                    fs.Add(fields[col - 1, row - 2]);
+                }
+            }
+        }
+
+        if (col + 2 < Field.FIELDS_X)
+        {
+            if (row + 1 < Field.FIELDS_Y)
+            {
+                if (fields[col + 2, row + 1].player != player)
+                {
+                    fs.Add(fields[col + 2, row + 1]);
+                }
+            }
+            if (row - 1 >= 0)
+            {
+                if (fields[col + 2, row - 1].player != player)
+                {
+                    fs.Add(fields[col + 2, row - 1]);
+                }
+            }
+        }
+
+        if (col - 2 >= 0)
+        {
+            if (row + 1 < Field.FIELDS_Y)
+            {
+                if (fields[col - 2, row + 1].player != player)
+                {
+                    fs.Add(fields[col - 2, row + 1]);
+                }
+            }
+            if (row - 1 >= 0)
+            {
+                if (fields[col - 2, row - 1].player != player)
+                {
+                    fs.Add(fields[col - 2, row - 1]);
+                }
+            }
+        }
+        return fs;
+    }
+
+    bool validKingField(int player, Field kingPosition, Field field)
+    {
+        if (field.player != Field.EMPTY)
+        {
+            return false;
+        }
+
+        int kingFieldPlayer = kingPosition.player;
+        kingPosition.player = Field.EMPTY; // We need to check moves while assuming king is not there
+
+        bool isKingField = false;
+
+        List<Field> allMoves = new List<Field>();
+
+        Field opponentKingField = fields[0, 0];
+
+        foreach (Field f in fields)
+        {
+            if (player == Field.WHITE)
+            {
+                if (f.player == Field.BLACK)
+                {
+                    allMoves.AddRange(getMoves(f, false));
+
+
+                    if (pieceIsType(getPiece(f), "King"))
+                    {
+                        opponentKingField = f;
+                    }
+                }
+            } else if (player == Field.BLACK)
+            {
+                if (f.player == Field.WHITE)
+                {
+                    allMoves.AddRange(getMoves(f, false));
+                    
+                    if (pieceIsType(getPiece(f), "King"))
+                    {
+                        opponentKingField = f;
+                    }
+                }
+            }
+        }
+
+        if (allMoves.Contains(field))
+        {
+            isKingField = false;
+        }
+        else if (Mathf.Abs(opponentKingField.row - field.row) <= 1 && Mathf.Abs(opponentKingField.col - field.col) <= 1)
+        {
+            // too close to other king
+            isKingField = false;
+        }
+        else
+        {
+            isKingField = true;
+        }
+
+        kingPosition.player = kingFieldPlayer;
+
+        return isKingField;
+    }
+
+    List<Field> getKingMoves(int player, Field f)
+    {
+        List<Field> fs = new List<Field>();
+
+        int row = f.row;
+        int col = f.col;
+
+        if (row + 1 < Field.FIELDS_Y)
+        {
+            if (col + 1 < Field.FIELDS_X)
+            {
+                if (validKingField(player, f, fields[col + 1, row + 1]))
+                {
+                    fs.Add(fields[col + 1, row + 1]);
+                }
+            }
+
+            if (validKingField(player, f, fields[col, row + 1]))
+            {
+                fs.Add(fields[col, row + 1]);
+            }
+
+            if (col - 1 >= 0)
+            {
+                if (validKingField(player, f, fields[col - 1, row + 1]))
+                {
+                    fs.Add(fields[col - 1, row + 1]);
+                }
+            }
+        }
+
+        if (col + 1 < Field.FIELDS_X)
+        {
+            if (validKingField(player, f, fields[col + 1, row]))
+            {
+                fs.Add(fields[col + 1, row]);
+            }
+        }
+
+        if (col - 1 >= 0)
+        {
+            if (validKingField(player, f, fields[col - 1, row]))
+            {
+                fs.Add(fields[col - 1, row]);
+            }
+        }
+
+        if (row - 1 >= 0)
+        {
+            if (col + 1 < Field.FIELDS_X)
+            {
+                if (validKingField(player, f, fields[col + 1, row - 1]))
+                {
+                    fs.Add(fields[col + 1, row - 1]);
+                }
+            }
+
+            if (validKingField(player, f, fields[col, row - 1]))
+            {
+                fs.Add(fields[col, row - 1]);
+            }
+
+            if (col - 1 >= 0)
+            {
+                if (validKingField(player, f, fields[col - 1, row - 1]))
+                {
+                    fs.Add(fields[col - 1, row - 1]);
+                }
+            }
+        }
+
+        return fs;
+    }
+
+    List<Field> getMoves(Field f)
+    {
+        return getMoves(f, true);
+    }
+
+    List<Field> getMoves(Field f, bool kingMoves)
+    {
+        List<Field> fs = new List<Field>();
+
+        Piece p = getPiece(f);
+        if (p == null)
+        {
+            return fs;
+        }
+
+        if (pieceIsType(p, "Pawn"))
+        {
+            fs = getPawnMoves(f.player, f);
+        }
+        else if (pieceIsType(p, "Rook"))
+        {
+            fs = getHorizontalMoves(f.player, f);
+            fs.AddRange(getVerticalMoves(f.player, f));
+        }
+        else if (pieceIsType(p, "Knight"))
+        {
+            fs = getKnightMoves(f.player, f);
+        }
+        else if (pieceIsType(p, "Bishop"))
+        {
+            fs = getDiagonalMoves(f.player, f);
+        }
+        else if (pieceIsType(p, "Queen"))
+        {
+            fs = getDiagonalMoves(f.player, f);
+            fs.AddRange(getHorizontalMoves(f.player, f));
+            fs.AddRange(getVerticalMoves(f.player, f));
+        }
+        else if (pieceIsType(p, "King"))
+        {
+            if (!kingMoves)
+            {
+                return fs;
+            }
+            else
+            {
+                fs = getKingMoves(f.player, f);
+            }
+        }
+
+        return fs;
+    }
+
+    void selectField(Field f)
+    {
+        foreach (Field field in fields)
+        {
+            field.highlight2 = false;
+        }
+
+        if (f == null)
+        {
+            selectedField = null;
+            return;
+        }
+
+        if (f.player != Field.EMPTY)
+        {
+            selectedField = f;
+        }
+
+        if (f.player == Field.WHITE)
+        {
+            List<Field> fs = getMoves(f);
+            highlight2Fields(fs);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-
-        Field f = getFieldByPiece();
-        if (f != null)
+        if (selectedField == null)
         {
-            highlightField(f);
-            highlightPiece(f);
+            Field f = getFieldByPiece();
+            if (f != null)
+            {
+                highlightField(f);
+                highlightPiece(f);
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    selectField(f);
+                }
+            }
+        } else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                selectField(null);
+            }
         }
-
-
-        /*if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit h;
-            if (Physics.Raycast(ray, out h))
-            {
-                Debug.Log(h.transform.name);
-            }
-
-            if (fieldPos3 != null)
-            {
-                whitePieces[11].gameObject.transform.position = (Vector3) fieldPos3;
-            }
-        }*/
 
         Debug.DrawLine(new Vector3(-50.2f, -0.4f, 0), new Vector3(48.375f, -0.4f, 0), Color.green);
         Debug.DrawLine(new Vector3(0, -0.4f, -55.5f), new Vector3(0, -0.4f, 43.3f), Color.blue);
