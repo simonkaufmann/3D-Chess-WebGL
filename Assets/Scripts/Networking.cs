@@ -14,12 +14,19 @@ public class Networking : MonoBehaviourPunCallbacks
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("Room1", roomOptions, TypedLobby.Default);
+        Debug.Log("Joined Room1");
     }
 
     [PunRPC]
-    public void sendMove(GameObject go)
+    public void sendMove(string[] str)
     {
-        Debug.Log("move: " + go.transform.name);
+        Field[] fs = new Field[str.Length];
+        for (int i = 0; i < fs.GetLength(0); i++)
+        {
+            fs[i] = JsonUtility.FromJson<Field>(str[i]);
+        }
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.receiveBoardStatus(fs);
     }
 
     // Start is called before the first frame update

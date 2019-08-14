@@ -880,6 +880,48 @@ public class Pieces : MonoBehaviour
         f1.player = Field.EMPTY;
     }
 
+    void sendBoardStatus()
+    {
+        string[] str = new string[fields.GetLength(0) * fields.GetLength(1)];
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
+                str[i * fields.GetLength(1) + j] = JsonUtility.ToJson(fields[i, j]);
+            }
+        }
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        photonView.RPC("sendMove", RpcTarget.All, str);
+    }
+
+    public void receiveBoardStatus(Field[] fs)
+    {
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
+                if (fields[i, j].no != fs[i * fields.GetLength(1) + j].no || fields[i, j].player != fs[i * fields.GetLength(1) + j].player)
+                {
+                    Piece p = getPiece(fields[i, j]);
+                    if (p != null)
+                    {
+                        p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
+                    }
+
+                    fields[i, j].no = fs[i * fields.GetLength(1) + j].no;
+                    fields[i, j].player = fs[i * fields.GetLength(1) + j].player;
+
+                    p = getPiece(fields[i, j]);
+                    if (p != null)
+                    {
+                        Vector2 pos = Field.getFieldPos(new Vector2Int(fs[i * fields.GetLength(1) + j].col, fs[i * fields.GetLength(1) + j].row));
+                        p.gameObject.transform.position = new Vector3(pos.x, p.gameObject.transform.position.y, pos.y);
+                    }
+                }
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -894,8 +936,6 @@ public class Pieces : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     selectField(f);
-                    PhotonView photonView = gameObject.GetComponent<PhotonView>();
-                    photonView.RPC("sendMove", RpcTarget.All, getPiece(f).gameObject);
                 }
             }
         } else
@@ -908,6 +948,7 @@ public class Pieces : MonoBehaviour
                 if (allMoves.Contains(f))
                 {
                     movePiece(selectedField, f);
+                    sendBoardStatus();
                 }
 
                 selectField(null);
