@@ -158,6 +158,8 @@ GameObject:
   m_Component:
   - component: {fileID: 192002603}
   - component: {fileID: 192002604}
+  - component: {fileID: 192002605}
+  - component: {fileID: 192002606}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -195,6 +197,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab817700f72dd534b8120460b1f2fc6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &192002605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192002602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3332bcfc9c90937488220766c62cc75a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &192002606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192002602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!64 &236236670
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -893,6 +894,8 @@ public class Pieces : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     selectField(f);
+                    PhotonView photonView = gameObject.GetComponent<PhotonView>();
+                    photonView.RPC("sendMove", RpcTarget.All, getPiece(f).gameObject);
                 }
             }
         } else
