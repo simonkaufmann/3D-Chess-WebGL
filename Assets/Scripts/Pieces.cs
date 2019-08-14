@@ -259,8 +259,6 @@ public class Pieces : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hit;
 
-        Vector3? fieldPos3 = null;
-
         hit = Physics.RaycastAll(ray);
         foreach (RaycastHit h in hit)
         {
