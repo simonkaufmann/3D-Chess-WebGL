@@ -896,27 +896,27 @@ public class Pieces : MonoBehaviour
 
     public void receiveBoardStatus(Field[] fs)
     {
+        foreach (Piece p in whitePieces)
+        {
+            p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
+        }
+        foreach (Piece p in blackPieces)
+        {
+            p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
+        }
+
         for (int i = 0; i < fields.GetLength(0); i++)
         {
             for (int j = 0; j < fields.GetLength(1); j++)
             {
-                if (fields[i, j].no != fs[i * fields.GetLength(1) + j].no || fields[i, j].player != fs[i * fields.GetLength(1) + j].player)
+                fields[i, j].no = fs[i * fields.GetLength(1) + j].no;
+                fields[i, j].player = fs[i * fields.GetLength(1) + j].player;
+
+                Piece p = getPiece(fields[i, j]);
+                if (p != null)
                 {
-                    Piece p = getPiece(fields[i, j]);
-                    if (p != null)
-                    {
-                        p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
-                    }
-
-                    fields[i, j].no = fs[i * fields.GetLength(1) + j].no;
-                    fields[i, j].player = fs[i * fields.GetLength(1) + j].player;
-
-                    p = getPiece(fields[i, j]);
-                    if (p != null)
-                    {
-                        Vector2 pos = Field.getFieldPos(new Vector2Int(fs[i * fields.GetLength(1) + j].col, fs[i * fields.GetLength(1) + j].row));
-                        p.gameObject.transform.position = new Vector3(pos.x, p.gameObject.transform.position.y, pos.y);
-                    }
+                    Vector2 pos = Field.getFieldPos(new Vector2Int(fs[i * fields.GetLength(1) + j].col, fs[i * fields.GetLength(1) + j].row));
+                    p.gameObject.transform.position = new Vector3(pos.x, p.gameObject.transform.position.y, pos.y);
                 }
             }
         }
