@@ -13,6 +13,11 @@ public class Pieces : MonoBehaviour
 
     Field[,] fields;
 
+    public int player = Field.WHITE;
+
+    public Camera cameraWhite;
+    public Camera cameraBlack;
+
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
 
     public static string[] namesWhitePieces =
@@ -925,6 +930,22 @@ public class Pieces : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player == Field.WHITE)
+        {
+            cameraWhite.gameObject.SetActive(true);
+            cameraBlack.gameObject.SetActive(false);
+
+            GameObject.Find("lightWhite").GetComponent<Light>().enabled = true;
+            GameObject.Find("lightBlack").GetComponent<Light>().enabled = false;
+        } else
+        {
+            cameraWhite.gameObject.SetActive(false);
+            cameraBlack.gameObject.SetActive(true);
+
+            GameObject.Find("lightWhite").GetComponent<Light>().enabled = false;
+            GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
+        }
+
         if (selectedField == null)
         {
             Field f = getFieldByPiece();
