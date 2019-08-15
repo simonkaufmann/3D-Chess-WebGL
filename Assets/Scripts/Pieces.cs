@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Pieces : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class Pieces : MonoBehaviour
     public int player = Field.WHITE;
 
     public bool myTurn = true;
+
+    public bool blackCastlingSmall = true;
+    public bool blackCastlingBig = true;
+    public bool whiteCastlingSmall = true;
+    public bool whiteCastlingBig = true;
 
     public Camera cameraWhite;
     public Camera cameraBlack;
@@ -768,6 +774,38 @@ public class Pieces : MonoBehaviour
             }
         }
 
+        if (player == Field.WHITE && whiteCastlingBig)
+        {
+            if (fields[1, 0].player == Field.EMPTY && fields[2, 0].player == Field.EMPTY && fields[3,0].player == Field.EMPTY)
+            {
+                fs.Add(fields[2, 0]);
+            }
+        }
+
+        if (player == Field.WHITE && whiteCastlingSmall)
+        {
+            if (fields[5, 0].player == Field.EMPTY && fields[6, 0].player == Field.EMPTY)
+            {
+                fs.Add(fields[6, 0]);
+            }
+        }
+
+        if (player == Field.BLACK && blackCastlingBig)
+        {
+            if (fields[1, 7].player == Field.EMPTY && fields[2, 7].player == Field.EMPTY && fields[3, 7].player == Field.EMPTY)
+            {
+                fs.Add(fields[2, 7]);
+            }
+        }
+
+        if (player == Field.BLACK && blackCastlingSmall)
+        {
+            if (fields[5, 7].player == Field.EMPTY && fields[6, 7].player == Field.EMPTY)
+            {
+                fs.Add(fields[6, 7]);
+            }
+        }
+
         return fs;
     }
 
@@ -887,6 +925,41 @@ public class Pieces : MonoBehaviour
         f1.player = Field.EMPTY;
     }
 
+    void checkKingMoved()
+    {
+        if (fields[4, 0].player != Field.WHITE || pieceIsType(getPiece(fields[4, 0]), "King") == false)
+        {
+            whiteCastlingBig = false;
+            whiteCastlingSmall = false;
+        }
+
+        if (fields[4, 7].player != Field.BLACK || pieceIsType(getPiece(fields[4, 7]), "King") == false)
+        {
+            blackCastlingBig = false;
+            blackCastlingSmall = false;
+        }
+
+        if (fields[0, 0].player != Field.WHITE || pieceIsType(getPiece(fields[0, 0]), "Rook") == false)
+        {
+            whiteCastlingBig = false;
+        }
+
+        if (fields[7, 0].player != Field.WHITE || pieceIsType(getPiece(fields[7, 0]), "Rook") == false)
+        {
+            whiteCastlingBig = false;
+        }
+
+        if (fields[0, 7].player != Field.BLACK || pieceIsType(getPiece(fields[0, 7]), "Rook") == false)
+        {
+            blackCastlingSmall = false;
+        }
+
+        if (fields[7, 7].player != Field.BLACK || pieceIsType(getPiece(fields[7, 7]), "Rook") == false)
+        {
+            blackCastlingBig = false;
+        }
+    }
+
     void sendBoardStatus()
     {
         string[] str = new string[fields.GetLength(0) * fields.GetLength(1)];
@@ -897,6 +970,9 @@ public class Pieces : MonoBehaviour
                 str[i * fields.GetLength(1) + j] = JsonUtility.ToJson(fields[i, j]);
             }
         }
+
+        checkKingMoved();
+
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("sendMove", RpcTarget.Others, str);
     }
@@ -929,6 +1005,30 @@ public class Pieces : MonoBehaviour
         }
 
         myTurn = true;
+        checkKingMoved();
+    }
+
+    void checkCastling(Field f)
+    {
+        if (whiteCastlingBig && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE)
+        {
+            movePiece(fields[0, 0], fields[3, 0]);            
+        }
+
+        if (whiteCastlingSmall && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE)
+        {
+            movePiece(fields[7, 0], fields[5, 0]);
+        }
+
+        if (blackCastlingBig && f.row == 7 && f.col == 2 && selectedField.player == Field.BLACK)
+        {
+            movePiece(fields[0, 7], fields[3, 7]);
+        }
+
+        if (blackCastlingSmall && f.row == 7 && f.col == 6 && selectedField.player == Field.BLACK)
+        {
+            movePiece(fields[7, 7], fields[5, 7]);
+        }
     }
 
     // Update is called once per frame
@@ -941,6 +1041,16 @@ public class Pieces : MonoBehaviour
 
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = true;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = false;
+
+            Image img = GameObject.Find("panelTurn").GetComponent<Image>();
+            if (myTurn)
+            {
+                img.color = Color.white;
+            }
+            else
+            {
+                img.color = Color.black;
+            }
         } else
         {
             cameraWhite.gameObject.SetActive(false);
@@ -948,6 +1058,16 @@ public class Pieces : MonoBehaviour
 
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = false;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
+
+            Image img = GameObject.Find("panelTurn").GetComponent<Image>();
+            if (myTurn)
+            {
+                img.color = Color.black;
+            }
+            else
+            {
+                img.color = Color.white;
+            }
         }
 
 
@@ -982,6 +1102,7 @@ public class Pieces : MonoBehaviour
                     List<Field> allMoves = getMoves(selectedField);
                     if (allMoves.Contains(f))
                     {
+                        checkCastling(f);
                         movePiece(selectedField, f);
                         sendBoardStatus();
                         myTurn = false;
