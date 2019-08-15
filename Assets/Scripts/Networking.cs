@@ -29,6 +29,13 @@ public class Networking : MonoBehaviourPunCallbacks
         p.receiveBoardStatus(fs);
     }
 
+    [PunRPC]
+    public void setPlayer(int player)
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.player = player;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

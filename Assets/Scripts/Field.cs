@@ -82,6 +82,19 @@ public class Field
         {
             rend.enabled = false;
         }
+
+        if (_highlight1 || _highlight2)
+        {
+            rend.material.color = Color.red;
+        }
+        else if (_highlight3)
+        {
+            rend.material.color = Color.green;
+        }
+        else
+        {
+            rend.material.color = Color.red;
+        }
     }
 
     public static Vector2Int? getField(Vector2 coord)

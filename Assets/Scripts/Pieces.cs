@@ -816,13 +816,26 @@ public class Pieces : MonoBehaviour
 
     List<Field> getMoves(Field f, bool threatened)
     {
+        return getMoves(f, threatened, true);
+    }
+
+    List<Field> getMoves(Field f, bool threatened, bool checkForChess)
+    {
         List<Field> fs = new List<Field>();
- 
+
         Piece p = getPiece(f);
         if (p == null)
         {
             return fs;
         }
+
+        if (checkForChess)
+        {
+            if (isChess() && !pieceIsType(getPiece(f), "King"))
+            {
+                return fs;
+            }
+        } 
 
         if (pieceIsType(p, "Pawn"))
         {
@@ -867,7 +880,10 @@ public class Pieces : MonoBehaviour
                 Piece piece = getPiece(field);
                 if (pieceIsType(piece, "King"))
                 {
-                    removals.Add(field);
+                    if (!checkForChess)
+                    {
+                        removals.Add(field);
+                    }
                 }
             }
         }
@@ -878,6 +894,25 @@ public class Pieces : MonoBehaviour
         }
 
         return fs;
+    }
+
+    bool isChess()
+    {
+        foreach (Field f in fields)
+        {
+            if (f.player != Field.EMPTY && f.player != player)
+            {
+                List<Field> moves = getMoves(f, true, false);
+                foreach (Field fi in moves)
+                {
+                    if (fi.player == player && pieceIsType(getPiece(fi), "King"))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     void selectField(Field f)
@@ -992,6 +1027,11 @@ public class Pieces : MonoBehaviour
         {
             for (int j = 0; j < fields.GetLength(1); j++)
             {
+                if (fields[i, j].no != fs[i * fields.GetLength(1) + j].no || fields[i, j].player != fs[i * fields.GetLength(1) + j].player)
+                {
+                    fields[i, j].highlight3 = true;
+                }
+
                 fields[i, j].no = fs[i * fields.GetLength(1) + j].no;
                 fields[i, j].player = fs[i * fields.GetLength(1) + j].player;
 
@@ -1012,7 +1052,7 @@ public class Pieces : MonoBehaviour
     {
         if (whiteCastlingBig && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
         {
-            movePiece(fields[0, 0], fields[3, 0]);            
+            movePiece(fields[0, 0], fields[3, 0]);
         }
 
         if (whiteCastlingSmall && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
@@ -1067,6 +1107,14 @@ public class Pieces : MonoBehaviour
             else
             {
                 img.color = Color.white;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            foreach (Field f in fields)
+            {
+                f.highlight3 = false;
             }
         }
 
