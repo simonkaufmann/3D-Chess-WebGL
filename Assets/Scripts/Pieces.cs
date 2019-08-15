@@ -15,6 +15,8 @@ public class Pieces : MonoBehaviour
 
     public int player = Field.WHITE;
 
+    public bool myTurn = true;
+
     public Camera cameraWhite;
     public Camera cameraBlack;
 
@@ -896,7 +898,7 @@ public class Pieces : MonoBehaviour
             }
         }
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
-        photonView.RPC("sendMove", RpcTarget.All, str);
+        photonView.RPC("sendMove", RpcTarget.Others, str);
     }
 
     public void receiveBoardStatus(Field[] fs)
@@ -925,6 +927,8 @@ public class Pieces : MonoBehaviour
                 }
             }
         }
+
+        myTurn = true;
     }
 
     // Update is called once per frame
@@ -946,6 +950,7 @@ public class Pieces : MonoBehaviour
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
         }
 
+
         if (selectedField == null)
         {
             Field f = getFieldByPiece();
@@ -954,24 +959,39 @@ public class Pieces : MonoBehaviour
                 highlightField(f);
                 highlightPiece(f);
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && myTurn)
                 {
-                    selectField(f);
+                    if (f != null)
+                    {
+                        if (f.player == player)
+                        {
+                            selectField(f);
+                        }
+                    }
                 }
             }
-        } else
+        }
+        else
         {
-            if (Input.GetMouseButtonDown(0))
+            if (myTurn)
             {
-                Field f = getFieldByField();
-
-                List<Field> allMoves = getMoves(selectedField);
-                if (allMoves.Contains(f))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    movePiece(selectedField, f);
-                    sendBoardStatus();
-                }
+                    Field f = getFieldByField();
 
+                    List<Field> allMoves = getMoves(selectedField);
+                    if (allMoves.Contains(f))
+                    {
+                        movePiece(selectedField, f);
+                        sendBoardStatus();
+                        myTurn = false;
+                    }
+
+                    selectField(null);
+                }
+            }
+            else
+            {
                 selectField(null);
             }
         }
