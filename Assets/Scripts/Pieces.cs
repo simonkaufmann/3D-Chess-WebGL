@@ -1010,22 +1010,22 @@ public class Pieces : MonoBehaviour
 
     void checkCastling(Field f)
     {
-        if (whiteCastlingBig && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE)
+        if (whiteCastlingBig && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[0, 0], fields[3, 0]);            
         }
 
-        if (whiteCastlingSmall && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE)
+        if (whiteCastlingSmall && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[7, 0], fields[5, 0]);
         }
 
-        if (blackCastlingBig && f.row == 7 && f.col == 2 && selectedField.player == Field.BLACK)
+        if (blackCastlingBig && f.row == 7 && f.col == 2 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[0, 7], fields[3, 7]);
         }
 
-        if (blackCastlingSmall && f.row == 7 && f.col == 6 && selectedField.player == Field.BLACK)
+        if (blackCastlingSmall && f.row == 7 && f.col == 6 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[7, 7], fields[5, 7]);
         }
