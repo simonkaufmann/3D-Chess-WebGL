@@ -64,6 +64,20 @@ public class Networking : MonoBehaviourPunCallbacks
         p.turn = turn;
     }
 
+    [PunRPC]
+    public void setWhitePieces(string[] whitePieces)
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.setWhitePieces(whitePieces);
+    }
+
+    [PunRPC]
+    public void setBlackPieces(string[] blackPieces)
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.setBlackPieces(blackPieces);
+    }
+
     // Start is called before the first frame update
     void Start()
     {

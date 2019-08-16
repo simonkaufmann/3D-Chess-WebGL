@@ -30,8 +30,13 @@ public class Pieces : MonoBehaviour
     public bool active = false;
 
     GameObject txtStatus;
+    GameObject txtPawnPromotion;
+    Field fieldPawnPromotion = null;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
+
+    public static int ROTATION_ANGLE_WHITE = -90;
+    public static int ROTATION_ANGLE_BLACK = 90;
 
     public static string[] namesWhitePieces =
     {
@@ -71,6 +76,46 @@ public class Pieces : MonoBehaviour
         "bBishopW",
         "bKnight2",
         "bRook2"
+    };
+
+    public string[] typesWhitePieces =
+    {
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Rook",
+        "Knight",
+        "Bishop",
+        "Queen",
+        "King",
+        "Bishop",
+        "Knight",
+        "Rook"
+    };
+
+    public string[] typesBlackPieces =
+    {
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Pawn",
+        "Rook",
+        "Knight",
+        "Bishop",
+        "King",
+        "Queen",
+        "Bishop",
+        "Knight",
+        "Rook"
     };
 
     Field selectedField = null;
@@ -126,7 +171,7 @@ public class Pieces : MonoBehaviour
             whitePieces[i].gameObject.name = "parent_" + namesWhitePieces[i];
             GameObject.Find(namesWhitePieces[i]).transform.SetParent(whitePieces[i].gameObject.transform);
             // For rotating knights:
-            whitePieces[i].gameObject.transform.Rotate(new Vector3(0, -90, 0));
+            whitePieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_WHITE, 0));
         }
 
         for (int i = 0; i < namesBlackPieces.Length; i++)
@@ -143,7 +188,7 @@ public class Pieces : MonoBehaviour
             blackPieces[i].gameObject.name = "parent_" + namesBlackPieces[i];
             GameObject.Find(namesBlackPieces[i]).transform.SetParent(blackPieces[i].gameObject.transform);
             // For rotating knights:
-            blackPieces[i].gameObject.transform.Rotate(new Vector3(0, 90, 0));
+            blackPieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_BLACK, 0));
         }
     }
 
@@ -164,6 +209,32 @@ public class Pieces : MonoBehaviour
         initialisePieces(whitePieces, blackPieces);
 
         txtStatus = GameObject.Find("txtStatus");
+        txtPawnPromotion = GameObject.Find("txtPawnPromotion");
+        txtPawnPromotion.SetActive(false);
+
+        foreach (Field f in fields)
+        {
+            f.player = Field.EMPTY;
+        }
+        fields[4, 5].player = Field.WHITE;
+        fields[4, 5].no = 4;
+        fields[5, 6].player = Field.WHITE;
+        fields[5, 6].no = 5;
+        fields[6, 6].player = Field.WHITE;
+        fields[6, 6].no = 6;
+        fields[7, 6].player = Field.WHITE;
+        fields[7, 6].no = 7;
+        fields[0, 0].no = 12;
+        fields[0, 0].player = Field.BLACK;
+        fields[1, 1].no = 1;
+        fields[1, 1].player = Field.BLACK;
+        fields[2, 1].no = 2;
+        fields[1, 1].player = Field.BLACK;
+        fields[3, 1].no = 3;
+        fields[3, 1].player = Field.BLACK;
+        fields[4, 1].no = 4;
+        fields[4, 1].player = Field.BLACK;
+        placePieces();
     }
 
     void highlightField(Field field)
@@ -176,6 +247,26 @@ public class Pieces : MonoBehaviour
         {
             field.highlight1 = true;
         }
+    }
+
+    void highlightPiece(Piece p)
+    {
+        if (p == null)
+        {
+            return;
+        }
+
+        foreach (Piece pi in whitePieces)
+        {
+            pi.highlight1 = false;
+        }
+
+        foreach (Piece pi in blackPieces)
+        {
+            pi.highlight1 = false;
+        }
+
+        p.highlight1 = true;
     }
 
     void highlightPiece(Field field)
@@ -229,7 +320,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        foreach(Piece p in blackPieces)
+        foreach (Piece p in blackPieces)
         {
             if (p.gameObject.transform.GetChild(0).transform.name.Equals(str))
             {
@@ -261,11 +352,13 @@ public class Pieces : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        
+
         if (Physics.Raycast(ray, out hit))
         {
+            Debug.Log(hit.transform.name);
             if (isPiece(hit.transform.name))
             {
+
                 Piece p = getPiece(fields, hit.transform.name);
 
                 foreach (Field f in fields)
@@ -282,6 +375,34 @@ public class Pieces : MonoBehaviour
             } else
             {
                 return getFieldByField();
+            }
+        }
+        return null;
+    }
+
+    Piece getPieceByPiece()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (isPiece(hit.transform.name))
+            {
+                for (int i = 0; i < namesWhitePieces.Length; i++)
+                {
+                    if (namesWhitePieces[i].Equals(hit.transform.name))
+                    {
+                        return whitePieces[i];
+                    }
+                }
+                for (int i = 0; i < namesBlackPieces.Length; i++)
+                {
+                    if (namesBlackPieces[i].Equals(hit.transform.name))
+                    {
+                        return blackPieces[i];
+                    }
+                }
             }
         }
         return null;
@@ -315,13 +436,27 @@ public class Pieces : MonoBehaviour
         {
             return false;
         }
-        if (p.gameObject.transform.GetChild(0).transform.name.Contains(type))
+        for (int i = 0; i < whitePieces.Length; i++)
         {
-            return true;
-        } else
-        {
-            return false;
+            if (Object.ReferenceEquals(p, whitePieces[i]))
+            {
+                if (type.Equals(typesWhitePieces[i]))
+                {
+                    return true;
+                }
+            }
         }
+        for (int i = 0; i < blackPieces.Length; i++)
+        {
+            if (Object.ReferenceEquals(p, blackPieces[i]))
+            {
+                if (type.Equals(typesBlackPieces[i]))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void highlight2Fields(List<Field> fs)
@@ -745,7 +880,7 @@ public class Pieces : MonoBehaviour
                 if (f.player == Field.WHITE)
                 {
                     allMoves.AddRange(getMoves(fields, f, true, false));
-                    
+
                     if (pieceIsType(getPiece(f), "King"))
                     {
                         opponentKingField = f;
@@ -846,7 +981,7 @@ public class Pieces : MonoBehaviour
 
         if (player == Field.WHITE && whiteCastlingBig)
         {
-            if (fields[1, 0].player == Field.EMPTY && fields[2, 0].player == Field.EMPTY && fields[3,0].player == Field.EMPTY)
+            if (fields[1, 0].player == Field.EMPTY && fields[2, 0].player == Field.EMPTY && fields[3, 0].player == Field.EMPTY)
             {
                 fs.Add(fields[2, 0]);
             }
@@ -1052,22 +1187,8 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    void movePiece(Field f1, Field f2)
+    Field movePieceEnpassant(Field f1, Field f2)
     {
-        /*Piece p = getPiece(f1);
-        Vector2 pos = Field.getFieldPos(new Vector2Int(f2.col, f2.row));
-
-        if (f2.player != Field.EMPTY)
-        {
-            Piece p2 = getPiece(f2);
-            GameObject p2go = p2.gameObject;
-            p2go.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p2go.transform.position.y, POSITION_OFF_SCREEN.y);
-        }
-
-        GameObject go = p.gameObject;
-        go.transform.position = new Vector3(pos.x, go.transform.position.y, pos.y);*/
-
-        // for enpassant
         Field enpassant = null;
 
         int col = f1.col;
@@ -1134,6 +1255,125 @@ public class Pieces : MonoBehaviour
             }
         }
 
+        return enpassant;
+    }
+
+    bool pawnPromotion(Piece p)
+    {
+        if (p == null)
+        {
+            return false;
+        }
+        if (!pieceIsType(p, "Queen") && !pieceIsType(p, "Rook") && !pieceIsType(p, "Knight") && !pieceIsType(p, "Bishop"))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < whitePieces.Length; i++)
+        {
+            if (Object.ReferenceEquals(whitePieces[i], p))
+            {
+                if (player == Field.WHITE)
+                {
+                    Piece pawn = getPiece(fieldPawnPromotion);
+                    string name = pawn.gameObject.transform.GetChild(0).name;
+                    Destroy(pawn.gameObject);
+                    pawn.gameObject = GameObject.Instantiate(whitePieces[i].gameObject);
+                    pawn.gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_WHITE, 0));
+                    pawn.gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                    typesWhitePieces[fieldPawnPromotion.no] = typesWhitePieces[i];
+                } else if (player == Field.BLACK)
+                {
+                    for (int j = 0; j < blackPieces.Length; j++)
+                    {
+                        if (typesWhitePieces[i].Equals(typesBlackPieces[j]))
+                        {
+                            Piece pawn = getPiece(fieldPawnPromotion);
+                            string name = pawn.gameObject.transform.GetChild(0).name;
+                            Destroy(pawn.gameObject);
+                            pawn.gameObject = GameObject.Instantiate(blackPieces[j].gameObject);
+                            pawn.gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_BLACK, 0));
+                            pawn.gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                            typesBlackPieces[fieldPawnPromotion.no] = typesBlackPieces[j];
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < blackPieces.Length; i++)
+        {
+            if (Object.ReferenceEquals(blackPieces[i], p))
+            {
+                if (player == Field.BLACK)
+                {
+                    Piece pawn = getPiece(fieldPawnPromotion);
+                    string name = pawn.gameObject.transform.GetChild(0).name;
+                    Destroy(pawn.gameObject);
+                    pawn.gameObject = GameObject.Instantiate(blackPieces[i].gameObject);
+                    pawn.gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_BLACK, 0));
+                    pawn.gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                    typesBlackPieces[fieldPawnPromotion.no] = typesBlackPieces[i];
+                }
+                else if (player == Field.WHITE)
+                {
+                    for (int j = 0; j < whitePieces.Length; j++)
+                    {
+                        if (typesBlackPieces[i].Equals(typesWhitePieces[j]))
+                        {
+                            Piece pawn = getPiece(fieldPawnPromotion);
+                            string name = pawn.gameObject.transform.GetChild(0).name;
+                            Destroy(pawn.gameObject);
+                            pawn.gameObject = GameObject.Instantiate(whitePieces[j].gameObject);
+                            pawn.gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_WHITE, 0));
+                            pawn.gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                            typesWhitePieces[fieldPawnPromotion.no] = typesWhitePieces[j];
+                        }
+                    }
+                }
+            }
+        }
+
+        fieldPawnPromotion = null;
+        txtPawnPromotion.SetActive(false);
+        placePieces();
+        return true;
+    }
+
+    bool pawnPromotion(Field f)
+    {
+        return pawnPromotion(getPiece(f));
+    }
+
+    void movePiecePawnPromotion()
+    {
+        for (int i = 0; i < Field.FIELDS_X; i++)
+        {
+            if (fields[i, 7].player == Field.WHITE && pieceIsType(getPiece(fields[i, 7]), "Pawn"))
+            {
+                fieldPawnPromotion = fields[i, 7];
+                txtPawnPromotion.SetActive(true);
+                return;
+
+            }
+            if (fields[i, 0].player == Field.BLACK && pieceIsType(getPiece(fields[i, 0]), "Pawn"))
+            {
+                fieldPawnPromotion = fields[i, 0];
+                txtPawnPromotion.SetActive(true);
+                return;
+            }
+        }
+    }
+
+    void PromotePawn()
+    {
+
+    }
+
+    void movePiece(Field f1, Field f2)
+    {
+        Field enpassant = movePieceEnpassant(f1, f2);
+
         if (enpassant != null)
         {
             enpassant.player = Field.EMPTY; // take pawn from enpassant field
@@ -1146,6 +1386,8 @@ public class Pieces : MonoBehaviour
         f1.player = Field.EMPTY;
 
         placePieces();
+
+        movePiecePawnPromotion();
     }
 
     void checkKingMoved()
@@ -1395,6 +1637,67 @@ public class Pieces : MonoBehaviour
         }
     }
 
+    void restSendMove()
+    {
+        sendBoardStatus();
+        if (player == Field.WHITE)
+        {
+            turn = Field.BLACK;
+        }
+        else if (player == Field.BLACK)
+        {
+            turn = Field.WHITE;
+        }
+    }
+
+    public void setWhitePieces(string[] whitePieces)
+    {
+        for (int i = 0; i < typesWhitePieces.Length; i++)
+        {
+            if (!this.typesWhitePieces[i].Equals(whitePieces[i]))
+            {
+                this.typesWhitePieces[i] = whitePieces[i];
+                string name = this.whitePieces[i].gameObject.transform.GetChild(0).name;
+                Destroy(this.whitePieces[i].gameObject);
+
+                for (int j = 0; j < whitePieces.Length; j++)
+                {
+                    if (whitePieces[i].Equals(typesWhitePieces[j]))
+                    {
+                        this.whitePieces[i].gameObject = GameObject.Instantiate(this.whitePieces[i].gameObject);
+                        this.whitePieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_WHITE, 0));
+                        this.whitePieces[i].gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void setBlackPieces(string[] blackPieces)
+    {
+        for (int i = 0; i < typesBlackPieces.Length; i++)
+        {
+            if (!this.typesBlackPieces[i].Equals(blackPieces[i]))
+            {
+                this.typesBlackPieces[i] = blackPieces[i];
+                string name = this.blackPieces[i].gameObject.transform.GetChild(0).name;
+                Destroy(this.blackPieces[i].gameObject);
+
+                for (int j = 0; j < blackPieces.Length; j++)
+                {
+                    if (blackPieces[i].Equals(typesBlackPieces[j]))
+                    {
+                        this.blackPieces[i].gameObject = GameObject.Instantiate(this.blackPieces[i].gameObject);
+                        this.blackPieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_BLACK, 0));
+                        this.blackPieces[i].gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -1433,13 +1736,35 @@ public class Pieces : MonoBehaviour
             Field f = getFieldByPiece();
             highlightField(f);
             highlightPiece(f);
+            if (f == null)
+            {
+                Piece p = getPieceByPiece();
+                highlightPiece(p);
+                if (fieldPawnPromotion != null && Input.GetMouseButtonDown(0))
+                {
+                    if (p != null)
+                    {
+                        if (pawnPromotion(p))
+                        {
+                            restSendMove();
+                        }
+                    }
+                }
+            }
             if (f != null)
             {
                 if (Input.GetMouseButtonDown(0) && turn == player)
                 {
-                    if (f != null)
+                    if (fieldPawnPromotion != null)
                     {
-                        if (f.player == player)
+                        if (pawnPromotion(f))
+                        {
+                            restSendMove();
+                        }
+                    }
+                    else
+                    {
+                        if (f.player == player && fieldPawnPromotion == null)
                         {
                             selectField(f);
                         }
@@ -1461,13 +1786,9 @@ public class Pieces : MonoBehaviour
                     {
                         checkCastling(f);
                         movePiece(selectedField, f);
-                        sendBoardStatus();
-                        if (player == Field.WHITE)
+                        if (fieldPawnPromotion == null)
                         {
-                            turn = Field.BLACK;
-                        } else if (player == Field.BLACK)
-                        {
-                            turn = Field.WHITE;
+                            restSendMove();
                         }
                     }
 
