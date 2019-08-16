@@ -995,7 +995,7 @@ public class Pieces : MonoBehaviour
 
     void movePiece(Field f1, Field f2)
     {
-        Piece p = getPiece(f1);
+        /*Piece p = getPiece(f1);
         Vector2 pos = Field.getFieldPos(new Vector2Int(f2.col, f2.row));
 
         if (f2.player != Field.EMPTY)
@@ -1006,11 +1006,13 @@ public class Pieces : MonoBehaviour
         }
 
         GameObject go = p.gameObject;
-        go.transform.position = new Vector3(pos.x, go.transform.position.y, pos.y);
+        go.transform.position = new Vector3(pos.x, go.transform.position.y, pos.y);*/
 
         f2.player = f1.player;
         f2.no = f1.no;
         f1.player = Field.EMPTY;
+
+        placePieces();
     }
 
     void checkKingMoved()
@@ -1065,14 +1067,18 @@ public class Pieces : MonoBehaviour
         photonView.RPC("sendMove", RpcTarget.Others, str);
     }
 
-    public void receiveBoardStatus(Field[] fs)
+    void placePieces()
     {
+        List<Piece> remainingWhite = new List<Piece>();
+        List<Piece> remainingBlack = new List<Piece>();
         foreach (Piece p in whitePieces)
         {
+            remainingWhite.Add(p);
             p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
         }
         foreach (Piece p in blackPieces)
         {
+            remainingBlack.Add(p);
             p.gameObject.transform.position = new Vector3(POSITION_OFF_SCREEN.x, p.gameObject.transform.position.y, POSITION_OFF_SCREEN.y);
         }
 
@@ -1080,25 +1086,79 @@ public class Pieces : MonoBehaviour
         {
             for (int j = 0; j < fields.GetLength(1); j++)
             {
+                Piece p = getPiece(fields[i, j]);
+                if (p != null)
+                {
+                    Vector2 pos = Field.getFieldPos(new Vector2Int(fields[i, j].col, fields[i, j].row));
+                    p.gameObject.transform.position = new Vector3(pos.x, p.gameObject.transform.position.y, pos.y);
+                    if (fields[i, j].player == Field.WHITE)
+                    {
+                        remainingWhite.Remove(p);
+                    } else if (fields[i, j].player == Field.BLACK)
+                    {
+                        remainingBlack.Remove(p);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < remainingWhite.Count; i++)
+        {
+            Vector2 pos;
+            if (i < 8)
+            {
+                pos = Field.getFieldPos(new Vector2Int(9, 7 - i % 8));
+            } else
+            {
+                pos = Field.getFieldPos(new Vector2Int(10, 7 - i % 8));
+            }
+
+
+            remainingWhite[i].gameObject.transform.position = new Vector3(pos.x, remainingWhite[i].gameObject.transform.position.y, pos.y);
+        }
+
+        for (int i = 0; i < remainingBlack.Count; i++)
+        {
+            Vector2 pos;
+            if (i < 8)
+            {
+                pos = Field.getFieldPos(new Vector2Int(-2, 7 - i % 8));
+            }
+            else
+            {
+                pos = Field.getFieldPos(new Vector2Int(-3, 7 - i % 8));
+            }
+
+
+            remainingBlack[i].gameObject.transform.position = new Vector3(pos.x, remainingBlack[i].gameObject.transform.position.y, pos.y);
+        }
+    }
+
+    public void receiveBoardStatus(Field[] fs)
+    {
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
                 if (fields[i, j].no != fs[i * fields.GetLength(1) + j].no || fields[i, j].player != fs[i * fields.GetLength(1) + j].player)
                 {
                     fields[i, j].highlight3 = true;
+                    Piece p = getPiece(fields[i, j]);
+                    if (p != null)
+                    {
+                        p.highlight3 = true;
+                    }
                 }
 
                 fields[i, j].no = fs[i * fields.GetLength(1) + j].no;
                 fields[i, j].player = fs[i * fields.GetLength(1) + j].player;
-
-                Piece p = getPiece(fields[i, j]);
-                if (p != null)
-                {
-                    Vector2 pos = Field.getFieldPos(new Vector2Int(fs[i * fields.GetLength(1) + j].col, fs[i * fields.GetLength(1) + j].row));
-                    p.gameObject.transform.position = new Vector3(pos.x, p.gameObject.transform.position.y, pos.y);
-                }
             }
         }
 
         myTurn = true;
         checkKingMoved();
+
+        placePieces();
     }
 
     void checkCastling(Field f)
@@ -1168,6 +1228,14 @@ public class Pieces : MonoBehaviour
             foreach (Field f in fields)
             {
                 f.highlight3 = false;
+            }
+            foreach (Piece p in whitePieces)
+            {
+                p.highlight3 = false;
+            }
+            foreach (Piece p in blackPieces)
+            {
+                p.highlight3 = false;
             }
         }
 
