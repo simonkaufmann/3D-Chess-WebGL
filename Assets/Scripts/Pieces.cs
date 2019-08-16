@@ -1005,6 +1005,11 @@ public class Pieces : MonoBehaviour
 
     bool isCheck(Field[,] fields)
     {
+        return isCheck(fields, player);
+    }
+
+    bool isCheck(Field[,] fields, int player)
+    {
         foreach (Field f in fields)
         {
             if (f.player != Field.EMPTY && f.player != player)
@@ -1145,6 +1150,19 @@ public class Pieces : MonoBehaviour
 
     void checkKingMoved()
     {
+
+        if (isCheck(fields, Field.WHITE))
+        {
+            whiteCastlingBig = false;
+            whiteCastlingSmall = false;
+        }
+
+        if (isCheck(fields, Field.BLACK))
+        {
+            blackCastlingBig = false;
+            blackCastlingSmall = false;
+        }
+
         if (fields[4, 0].player != Field.WHITE || pieceIsType(getPiece(fields[4, 0]), "King") == false)
         {
             whiteCastlingBig = false;
@@ -1164,17 +1182,17 @@ public class Pieces : MonoBehaviour
 
         if (fields[7, 0].player != Field.WHITE || pieceIsType(getPiece(fields[7, 0]), "Rook") == false)
         {
-            whiteCastlingBig = false;
+            whiteCastlingSmall = false;
         }
 
         if (fields[0, 7].player != Field.BLACK || pieceIsType(getPiece(fields[0, 7]), "Rook") == false)
         {
-            blackCastlingSmall = false;
+            blackCastlingBig = false;
         }
 
         if (fields[7, 7].player != Field.BLACK || pieceIsType(getPiece(fields[7, 7]), "Rook") == false)
         {
-            blackCastlingBig = false;
+            blackCastlingSmall = false;
         }
     }
 
