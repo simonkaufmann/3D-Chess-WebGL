@@ -123,6 +123,8 @@ public class Pieces : MonoBehaviour
             whitePieces[i].gameObject.transform.parent = gameObject.transform.Find("chessBoard");
             whitePieces[i].gameObject.name = "parent_" + namesWhitePieces[i];
             GameObject.Find(namesWhitePieces[i]).transform.SetParent(whitePieces[i].gameObject.transform);
+            // For rotating knights:
+            whitePieces[i].gameObject.transform.Rotate(new Vector3(0, -90, 0));
         }
 
         for (int i = 0; i < namesBlackPieces.Length; i++)
@@ -138,6 +140,8 @@ public class Pieces : MonoBehaviour
             blackPieces[i].gameObject.transform.parent = gameObject.transform.Find("chessBoard");
             blackPieces[i].gameObject.name = "parent_" + namesBlackPieces[i];
             GameObject.Find(namesBlackPieces[i]).transform.SetParent(blackPieces[i].gameObject.transform);
+            // For rotating knights:
+            blackPieces[i].gameObject.transform.Rotate(new Vector3(0, 90, 0));
         }
     }
 
