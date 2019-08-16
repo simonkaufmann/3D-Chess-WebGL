@@ -844,7 +844,7 @@ public class Pieces : MonoBehaviour
 
         /*if (checkForChess)
         {
-            if (isChess(fields) && !pieceIsType(getPiece(f), "King"))
+            if (isCheck(fields) && !pieceIsType(getPiece(f), "King"))
             {
                 return fs;
             }
@@ -915,7 +915,7 @@ public class Pieces : MonoBehaviour
 
                 f1.player = Field.EMPTY;
 
-                if (isChess(new_fields))
+                if (isCheck(new_fields))
                 {
                     if (!removals.Contains(field))
                     {
@@ -933,7 +933,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    bool isChess(Field[,] fields)
+    bool isCheck(Field[,] fields)
     {
         foreach (Field f in fields)
         {
@@ -951,13 +951,13 @@ public class Pieces : MonoBehaviour
                     }
                     if (fi.player == player && pieceIsType(getPiece(fi), "King"))
                     {
-                        Debug.Log("isChess is true");
+                        Debug.Log("isCheck is true");
                         return true;
                     }
                 }
             }
         }
-        Debug.Log("isChess if false");
+        Debug.Log("isCheck if false");
         return false;
     }
 
