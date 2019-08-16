@@ -88,7 +88,7 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.ConnectToRegion("eu");
+            PhotonNetwork.ConnectUsingSettings();
         }
     }
 }
