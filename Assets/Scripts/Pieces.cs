@@ -13,6 +13,7 @@ public class Pieces : MonoBehaviour
     Piece[] blackPieces;
 
     Field[,] fields;
+    Field[,] oldFields;
 
     public int player = Field.WHITE;
 
@@ -106,6 +107,7 @@ public class Pieces : MonoBehaviour
                 fields[i, j] = new Field(i, j);
             }
         }
+        oldFields = cloneFields(fields);
     }
 
     void initialisePieces(Piece[] whitePieces, Piece[] blackPieces)
@@ -309,6 +311,10 @@ public class Pieces : MonoBehaviour
 
     bool pieceIsType(Piece p, string type)
     {
+        if (p == null)
+        {
+            return false;
+        }
         if (p.gameObject.transform.GetChild(0).transform.name.Contains(type))
         {
             return true;
@@ -402,6 +408,53 @@ public class Pieces : MonoBehaviour
                     {
                         fs.Add(fields[col + 1, row - 1]);
                     }
+                }
+            }
+        }
+
+        // For EnPassant:
+        if (player == Field.WHITE && row == 4)
+        {
+            if (col > 0)
+            {
+                if (oldFields[col - 1, 6].player == Field.BLACK && pieceIsType(getPiece(oldFields[col - 1, 6]), "Pawn")
+                    && fields[col - 1, 6].player == Field.EMPTY && pieceIsType(getPiece(fields[col - 1, 4]), "Pawn")
+                    && fields[col - 1, 5].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col - 1, 5]);
+                }
+            }
+
+            if (col < Field.FIELDS_X - 1)
+            {
+                if (oldFields[col + 1, 6].player == Field.BLACK && pieceIsType(getPiece(oldFields[col + 1, 6]), "Pawn")
+                    && fields[col + 1, 6].player == Field.EMPTY && pieceIsType(getPiece(fields[col + 1, 4]), "Pawn")
+                    && fields[col + 1, 5].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col + 1, 5]);
+                }
+            }
+        }
+
+        if (player == Field.BLACK && row == 3)
+        {
+            if (col > 0)
+            {
+                if (oldFields[col - 1, 1].player == Field.BLACK && pieceIsType(getPiece(oldFields[col - 1, 1]), "Pawn")
+                    && fields[col - 1, 1].player == Field.EMPTY && pieceIsType(getPiece(fields[col - 1, 3]), "Pawn")
+                    && fields[col - 1, 2].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col - 1, 2]);
+                }
+            }
+
+            if (col < Field.FIELDS_X - 1)
+            {
+                if (oldFields[col + 1, 1].player == Field.BLACK && pieceIsType(getPiece(oldFields[col + 1, 1]), "Pawn")
+                    && fields[col + 1, 1].player == Field.EMPTY && pieceIsType(getPiece(fields[col + 1, 3]), "Pawn")
+                    && fields[col + 1, 2].player == Field.EMPTY)
+                {
+                    fs.Add(fields[col + 1, 2]);
                 }
             }
         }
@@ -1009,6 +1062,80 @@ public class Pieces : MonoBehaviour
         GameObject go = p.gameObject;
         go.transform.position = new Vector3(pos.x, go.transform.position.y, pos.y);*/
 
+        // for enpassant
+        Field enpassant = null;
+
+        int col = f1.col;
+        int row = f1.row;
+
+        if (player == Field.WHITE && row == 4)
+        {
+            if (col > 0)
+            {
+                if (oldFields[col - 1, 6].player == Field.BLACK && pieceIsType(getPiece(oldFields[col - 1, 6]), "Pawn")
+                    && fields[col - 1, 6].player == Field.EMPTY && pieceIsType(getPiece(fields[col - 1, 4]), "Pawn")
+                    && fields[col - 1, 5].player == Field.EMPTY)
+                {
+                    if (f2.row == 5 && f2.col == col - 1)
+                    {
+                        enpassant = fields[col - 1, 4];
+                    }
+                }
+            }
+
+            if (col < Field.FIELDS_X - 1)
+            {
+                if (oldFields[col + 1, 6].player == Field.BLACK && pieceIsType(getPiece(oldFields[col + 1, 6]), "Pawn")
+                    && fields[col + 1, 6].player == Field.EMPTY && pieceIsType(getPiece(fields[col + 1, 4]), "Pawn")
+                    && fields[col + 1, 5].player == Field.EMPTY)
+                {
+                    if (f2.row == 5 && f2.col == col + 1)
+                    {
+                        if (f2.row == 5 && f2.col == col + 1)
+                        {
+                            enpassant = fields[col + 1, 4];
+                        }
+                    }
+                }
+            }
+        }
+
+        if (player == Field.BLACK && row == 3)
+        {
+            if (col > 0)
+            {
+                if (oldFields[col - 1, 1].player == Field.BLACK && pieceIsType(getPiece(oldFields[col - 1, 1]), "Pawn")
+                    && fields[col - 1, 1].player == Field.EMPTY && pieceIsType(getPiece(fields[col - 1, 3]), "Pawn")
+                    && fields[col - 1, 2].player == Field.EMPTY)
+                {
+                    if (f2.row == 2 && f2.col == col - 1)
+                    {
+                        enpassant = fields[col - 1, 3];
+                    }
+                }
+            }
+
+            if (col < Field.FIELDS_X - 1)
+            {
+                if (oldFields[col + 1, 1].player == Field.BLACK && pieceIsType(getPiece(oldFields[col + 1, 1]), "Pawn")
+                    && fields[col + 1, 1].player == Field.EMPTY && pieceIsType(getPiece(fields[col + 1, 3]), "Pawn")
+                    && fields[col + 1, 2].player == Field.EMPTY)
+                {
+                    if (f2.row == 2 && f2.col == col + 1)
+                    {
+                        enpassant = fields[col + 1, 3];
+                    }
+                }
+            }
+        }
+
+        if (enpassant != null)
+        {
+            enpassant.player = Field.EMPTY; // take pawn from enpassant field
+        }
+
+        oldFields = cloneFields(fields);
+
         f2.player = f1.player;
         f2.no = f1.no;
         f1.player = Field.EMPTY;
@@ -1145,6 +1272,24 @@ public class Pieces : MonoBehaviour
 
     public void receiveBoardStatus(Field[] fs)
     {
+
+        bool fieldChanged = false;
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
+                if (fs[i * fields.GetLength(1) + j].player != fields[i, j].player || fields[i, j].no != fs[i * fields.GetLength(1) + j].no)
+                {
+                    fieldChanged = true;
+                }
+            }
+        }
+
+        if (fieldChanged)
+        {
+            oldFields = cloneFields(fields);
+        }
+
         for (int i = 0; i < fields.GetLength(0); i++)
         {
             for (int j = 0; j < fields.GetLength(1); j++)
