@@ -662,7 +662,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.BLACK)
                 {
-                    allMoves.AddRange(getMoves(f, true));
+                    allMoves.AddRange(getMoves(f, true, false));
 
 
                     if (pieceIsType(getPiece(f), "King"))
@@ -674,7 +674,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.WHITE)
                 {
-                    allMoves.AddRange(getMoves(f, true));
+                    allMoves.AddRange(getMoves(f, true, false));
                     
                     if (pieceIsType(getPiece(f), "King"))
                     {
@@ -880,7 +880,7 @@ public class Pieces : MonoBehaviour
                 Piece piece = getPiece(field);
                 if (pieceIsType(piece, "King"))
                 {
-                    if (!checkForChess)
+                    if (checkForChess)
                     {
                         removals.Add(field);
                     }
@@ -905,13 +905,22 @@ public class Pieces : MonoBehaviour
                 List<Field> moves = getMoves(f, true, false);
                 foreach (Field fi in moves)
                 {
+                    if (f.row == 3 && f.col == 1)
+                    {
+                        foreach(Field fss in moves)
+                        {
+                            Debug.Log("Field of 1/3: col: " + fss.col + " row: " + fss.row);
+                        }
+                    }
                     if (fi.player == player && pieceIsType(getPiece(fi), "King"))
                     {
+                        Debug.Log("isChess is true");
                         return true;
                     }
                 }
             }
         }
+        Debug.Log("isChess if false");
         return false;
     }
 
