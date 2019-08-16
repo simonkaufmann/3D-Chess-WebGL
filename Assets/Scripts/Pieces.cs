@@ -355,7 +355,6 @@ public class Pieces : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
-            Debug.Log(hit.transform.name);
             if (isPiece(hit.transform.name))
             {
 
