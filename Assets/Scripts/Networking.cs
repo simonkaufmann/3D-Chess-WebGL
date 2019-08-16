@@ -81,15 +81,14 @@ public class Networking : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
     }
 
     // Update is called once per frame
     void Update()
     {
-       /* if (!PhotonNetwork.IsConnected)
+        if (!PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.ConnectUsingSettings();
-        }*/
+            PhotonNetwork.ConnectToRegion("eu");
+        }
     }
 }

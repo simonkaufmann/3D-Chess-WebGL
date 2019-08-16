@@ -212,7 +212,7 @@ public class Pieces : MonoBehaviour
         txtPawnPromotion = GameObject.Find("txtPawnPromotion");
         txtPawnPromotion.SetActive(false);
 
-        foreach (Field f in fields)
+        /*foreach (Field f in fields)
         {
             f.player = Field.EMPTY;
         }
@@ -234,7 +234,7 @@ public class Pieces : MonoBehaviour
         fields[3, 1].player = Field.BLACK;
         fields[4, 1].no = 4;
         fields[4, 1].player = Field.BLACK;
-        placePieces();
+        placePieces();*/
     }
 
     void highlightField(Field field)
