@@ -15,7 +15,6 @@ public class UI : MonoBehaviour
         Toggle tBlack = toggleBlack.GetComponent<Toggle>();
 
         Pieces p = gameObject.GetComponent<Pieces>();
-        p.myTurn = !p.myTurn;
 
         if (tWhite.isOn)
         {

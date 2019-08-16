@@ -16,7 +16,7 @@ public class Pieces : MonoBehaviour
 
     public int player = Field.WHITE;
 
-    public bool myTurn = true;
+    public int turn = Field.WHITE;
 
     public bool blackCastlingSmall = true;
     public bool blackCastlingBig = true;
@@ -27,6 +27,8 @@ public class Pieces : MonoBehaviour
     public Camera cameraBlack;
 
     public bool active = false;
+
+    GameObject txtStatus;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
 
@@ -154,6 +156,8 @@ public class Pieces : MonoBehaviour
         setFieldStartingPosition(fields);
 
         initialisePieces(whitePieces, blackPieces);
+
+        txtStatus = GameObject.Find("txtStatus");
     }
 
     void highlightField(Field field)
@@ -1057,7 +1061,15 @@ public class Pieces : MonoBehaviour
         checkKingMoved();
 
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
-        photonView.RPC("sendMove", RpcTarget.Others, str);
+        photonView.RPC("sendMove", RpcTarget.AllBufferedViaServer, str);
+        if (player == Field.WHITE)
+        {
+            photonView.RPC("sendTurn", RpcTarget.AllBufferedViaServer, Field.BLACK);
+        }
+        else
+        {
+            photonView.RPC("sendTurn", RpcTarget.AllBufferedViaServer, Field.WHITE);
+        }
     }
 
     void placePieces()
@@ -1148,7 +1160,6 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        myTurn = true;
         checkKingMoved();
 
         placePieces();
@@ -1188,7 +1199,7 @@ public class Pieces : MonoBehaviour
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = false;
 
             Image img = GameObject.Find("panelTurn").GetComponent<Image>();
-            if (myTurn)
+            if (turn == player)
             {
                 img.color = Color.white;
             }
@@ -1206,7 +1217,7 @@ public class Pieces : MonoBehaviour
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
 
             Image img = GameObject.Find("panelTurn").GetComponent<Image>();
-            if (myTurn)
+            if (turn == player)
             {
                 img.color = Color.black;
             }
@@ -1224,8 +1235,12 @@ public class Pieces : MonoBehaviour
 
         if (!active)
         {
-
+            txtStatus.SetActive(true);
             return;
+        }
+        else
+        {
+            txtStatus.SetActive(false);
         }
 
         // Delete green highlighting from received fields after every click
@@ -1253,7 +1268,7 @@ public class Pieces : MonoBehaviour
             highlightPiece(f);
             if (f != null)
             {
-                if (Input.GetMouseButtonDown(0) && myTurn)
+                if (Input.GetMouseButtonDown(0) && turn == player)
                 {
                     if (f != null)
                     {
@@ -1268,7 +1283,7 @@ public class Pieces : MonoBehaviour
         // I field is selected, then check wheter it needs to be moved
         else
         {
-            if (myTurn)
+            if (turn == player)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -1280,7 +1295,13 @@ public class Pieces : MonoBehaviour
                         checkCastling(f);
                         movePiece(selectedField, f);
                         sendBoardStatus();
-                        myTurn = false;
+                        if (player == Field.WHITE)
+                        {
+                            turn = Field.BLACK;
+                        } else if (player == Field.BLACK)
+                        {
+                            turn = Field.WHITE;
+                        }
                     }
 
                     selectField(null);
