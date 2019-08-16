@@ -26,6 +26,8 @@ public class Pieces : MonoBehaviour
     public Camera cameraWhite;
     public Camera cameraBlack;
 
+    public bool active = false;
+
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
 
     public static string[] namesWhitePieces =
@@ -949,22 +951,13 @@ public class Pieces : MonoBehaviour
                 List<Field> moves = getMoves(fields, f, true, false);
                 foreach (Field fi in moves)
                 {
-                    if (f.row == 3 && f.col == 1)
-                    {
-                        foreach(Field fss in moves)
-                        {
-                            Debug.Log("Field of 1/3: col: " + fss.col + " row: " + fss.row);
-                        }
-                    }
                     if (fi.player == player && pieceIsType(getPiece(fi), "King"))
                     {
-                        Debug.Log("isCheck is true");
                         return true;
                     }
                 }
             }
         }
-        Debug.Log("isCheck if false");
         return false;
     }
 
@@ -1184,8 +1177,7 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void setCameras()
     {
         if (player == Field.WHITE)
         {
@@ -1204,7 +1196,8 @@ public class Pieces : MonoBehaviour
             {
                 img.color = Color.black;
             }
-        } else
+        }
+        else
         {
             cameraWhite.gameObject.SetActive(false);
             cameraBlack.gameObject.SetActive(true);
@@ -1222,7 +1215,20 @@ public class Pieces : MonoBehaviour
                 img.color = Color.white;
             }
         }
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        setCameras();
+
+        if (!active)
+        {
+
+            return;
+        }
+
+        // Delete green highlighting from received fields after every click
         if (Input.GetMouseButtonDown(0))
         {
             foreach (Field f in fields)
@@ -1239,7 +1245,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-
+        // None selected -> highlight field under cursor and if clicked select that field
         if (selectedField == null)
         {
             Field f = getFieldByPiece();
@@ -1259,6 +1265,7 @@ public class Pieces : MonoBehaviour
                 }
             }
         }
+        // I field is selected, then check wheter it needs to be moved
         else
         {
             if (myTurn)

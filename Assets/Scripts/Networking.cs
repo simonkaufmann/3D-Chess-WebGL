@@ -9,12 +9,33 @@ public class Networking : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("OnConnectedToMaster() was called by PUN.");
+        Debug.Log("connected to master");
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("Room1", roomOptions, TypedLobby.Default);
-        Debug.Log("Joined Room1");
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        base.OnJoinRoomFailed(returnCode, message);
+        Debug.Log(message);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
+        Debug.Log("Joined room");
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.active = true;
+    }
+
+    public override void OnCreatedRoom()
+    {
+        base.OnCreatedRoom();
+        Debug.Log("Created room");
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.active = true;
     }
 
     [PunRPC]
@@ -45,6 +66,9 @@ public class Networking : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
+       /* if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }*/
     }
 }
