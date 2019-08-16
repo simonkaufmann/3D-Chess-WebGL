@@ -1064,11 +1064,11 @@ public class Pieces : MonoBehaviour
         photonView.RPC("sendMove", RpcTarget.AllBufferedViaServer, str);
         if (player == Field.WHITE)
         {
-            photonView.RPC("sendTurn", RpcTarget.AllBufferedViaServer, Field.BLACK);
+            photonView.RPC("setTurn", RpcTarget.AllBufferedViaServer, Field.BLACK);
         }
         else
         {
-            photonView.RPC("sendTurn", RpcTarget.AllBufferedViaServer, Field.WHITE);
+            photonView.RPC("setTurn", RpcTarget.AllBufferedViaServer, Field.WHITE);
         }
     }
 
