@@ -642,7 +642,7 @@ public class Pieces : MonoBehaviour
 
     bool validKingField(Field[,] fields, int player, Field kingPosition, Field field)
     {
-        if (field.player != Field.EMPTY)
+        if (field.player == player)
         {
             return false;
         }
