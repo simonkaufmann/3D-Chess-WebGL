@@ -1452,6 +1452,8 @@ public class Pieces : MonoBehaviour
 
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("sendMove", RpcTarget.AllBufferedViaServer, str);
+        photonView.RPC("setWhitePieces", RpcTarget.AllBufferedViaServer, typesWhitePieces);
+        photonView.RPC("setBlackPieces", RpcTarget.AllBufferedViaServer, typesBlackPieces);
         if (player == Field.WHITE)
         {
             photonView.RPC("setTurn", RpcTarget.AllBufferedViaServer, Field.BLACK);
@@ -1655,7 +1657,6 @@ public class Pieces : MonoBehaviour
         {
             if (!this.typesWhitePieces[i].Equals(whitePieces[i]))
             {
-                this.typesWhitePieces[i] = whitePieces[i];
                 string name = this.whitePieces[i].gameObject.transform.GetChild(0).name;
                 Destroy(this.whitePieces[i].gameObject);
 
@@ -1663,14 +1664,16 @@ public class Pieces : MonoBehaviour
                 {
                     if (whitePieces[i].Equals(typesWhitePieces[j]))
                     {
-                        this.whitePieces[i].gameObject = GameObject.Instantiate(this.whitePieces[i].gameObject);
+                        this.whitePieces[i].gameObject = GameObject.Instantiate(this.whitePieces[j].gameObject);
                         this.whitePieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_WHITE, 0));
                         this.whitePieces[i].gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
                         break;
                     }
                 }
+                this.typesWhitePieces[i] = whitePieces[i];
             }
         }
+        placePieces();
     }
 
     public void setBlackPieces(string[] blackPieces)
@@ -1679,7 +1682,6 @@ public class Pieces : MonoBehaviour
         {
             if (!this.typesBlackPieces[i].Equals(blackPieces[i]))
             {
-                this.typesBlackPieces[i] = blackPieces[i];
                 string name = this.blackPieces[i].gameObject.transform.GetChild(0).name;
                 Destroy(this.blackPieces[i].gameObject);
 
@@ -1687,14 +1689,16 @@ public class Pieces : MonoBehaviour
                 {
                     if (blackPieces[i].Equals(typesBlackPieces[j]))
                     {
-                        this.blackPieces[i].gameObject = GameObject.Instantiate(this.blackPieces[i].gameObject);
+                        this.blackPieces[i].gameObject = GameObject.Instantiate(this.blackPieces[j].gameObject);
                         this.blackPieces[i].gameObject.transform.Rotate(new Vector3(0, ROTATION_ANGLE_BLACK, 0));
                         this.blackPieces[i].gameObject.transform.GetChild(0).name = name; // so that getFieldByPiece() gives back correct result
                         break;
                     }
                 }
+                this.typesBlackPieces[i] = blackPieces[i];
             }
         }
+        placePieces();
     }
 
     // Update is called once per frame
