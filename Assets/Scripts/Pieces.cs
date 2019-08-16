@@ -204,7 +204,7 @@ public class Pieces : MonoBehaviour
         return contained;
     }
 
-    Piece getPiece(string str)
+    Piece getPiece(Field[,] fields, string str)
     {
         foreach (Piece p in whitePieces)
         {
@@ -247,7 +247,7 @@ public class Pieces : MonoBehaviour
         {
             if (isPiece(hit.transform.name))
             {
-                Piece p = getPiece(hit.transform.name);
+                Piece p = getPiece(fields, hit.transform.name);
 
                 foreach (Field f in fields)
                 {
@@ -309,12 +309,12 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    List<Field> getPawnMoves(int player, Field f)
+    List<Field> getPawnMoves(Field[,] fields, int player, Field f)
     {
-        return getPawnMoves(player, f, false);
+        return getPawnMoves(fields, player, f, false);
     }
 
-    List<Field> getPawnMoves(int player, Field f, bool threatened)
+    List<Field> getPawnMoves(Field[,] fields, int player, Field f, bool threatened)
     {
         List<Field> fs = new List<Field>();
         int row = f.row;
@@ -392,7 +392,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    List<Field> getHorizontalMoves(int player, Field f)
+    List<Field> getHorizontalMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
         int row = f.row;
@@ -432,7 +432,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    List<Field> getVerticalMoves(int player, Field f)
+    List<Field> getVerticalMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
         int row = f.row;
@@ -472,7 +472,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    List<Field> getDiagonalMoves(int player, Field f)
+    List<Field> getDiagonalMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
         int row = f.row;
@@ -560,7 +560,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    List<Field> getKnightMoves(int player, Field f)
+    List<Field> getKnightMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
         int row = f.row;
@@ -640,7 +640,7 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    bool validKingField(int player, Field kingPosition, Field field)
+    bool validKingField(Field[,] fields, int player, Field kingPosition, Field field)
     {
         if (field.player != Field.EMPTY)
         {
@@ -662,7 +662,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.BLACK)
                 {
-                    allMoves.AddRange(getMoves(f, true, false));
+                    allMoves.AddRange(getMoves(fields, f, true, false));
 
 
                     if (pieceIsType(getPiece(f), "King"))
@@ -674,7 +674,7 @@ public class Pieces : MonoBehaviour
             {
                 if (f.player == Field.WHITE)
                 {
-                    allMoves.AddRange(getMoves(f, true, false));
+                    allMoves.AddRange(getMoves(fields, f, true, false));
                     
                     if (pieceIsType(getPiece(f), "King"))
                     {
@@ -703,7 +703,7 @@ public class Pieces : MonoBehaviour
         return isKingField;
     }
 
-    List<Field> getKingMoves(int player, Field f)
+    List<Field> getKingMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
 
@@ -714,20 +714,20 @@ public class Pieces : MonoBehaviour
         {
             if (col + 1 < Field.FIELDS_X)
             {
-                if (validKingField(player, f, fields[col + 1, row + 1]))
+                if (validKingField(fields, player, f, fields[col + 1, row + 1]))
                 {
                     fs.Add(fields[col + 1, row + 1]);
                 }
             }
 
-            if (validKingField(player, f, fields[col, row + 1]))
+            if (validKingField(fields, player, f, fields[col, row + 1]))
             {
                 fs.Add(fields[col, row + 1]);
             }
 
             if (col - 1 >= 0)
             {
-                if (validKingField(player, f, fields[col - 1, row + 1]))
+                if (validKingField(fields, player, f, fields[col - 1, row + 1]))
                 {
                     fs.Add(fields[col - 1, row + 1]);
                 }
@@ -736,7 +736,7 @@ public class Pieces : MonoBehaviour
 
         if (col + 1 < Field.FIELDS_X)
         {
-            if (validKingField(player, f, fields[col + 1, row]))
+            if (validKingField(fields, player, f, fields[col + 1, row]))
             {
                 fs.Add(fields[col + 1, row]);
             }
@@ -744,7 +744,7 @@ public class Pieces : MonoBehaviour
 
         if (col - 1 >= 0)
         {
-            if (validKingField(player, f, fields[col - 1, row]))
+            if (validKingField(fields, player, f, fields[col - 1, row]))
             {
                 fs.Add(fields[col - 1, row]);
             }
@@ -754,20 +754,20 @@ public class Pieces : MonoBehaviour
         {
             if (col + 1 < Field.FIELDS_X)
             {
-                if (validKingField(player, f, fields[col + 1, row - 1]))
+                if (validKingField(fields, player, f, fields[col + 1, row - 1]))
                 {
                     fs.Add(fields[col + 1, row - 1]);
                 }
             }
 
-            if (validKingField(player, f, fields[col, row - 1]))
+            if (validKingField(fields, player, f, fields[col, row - 1]))
             {
                 fs.Add(fields[col, row - 1]);
             }
 
             if (col - 1 >= 0)
             {
-                if (validKingField(player, f, fields[col - 1, row - 1]))
+                if (validKingField(fields, player, f, fields[col - 1, row - 1]))
                 {
                     fs.Add(fields[col - 1, row - 1]);
                 }
@@ -809,17 +809,30 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    List<Field> getMoves(Field f)
+    Field[,] cloneFields(Field[,] fields)
     {
-        return getMoves(f, false);
+        Field[,] new_fields = new Field[fields.GetLength(0), fields.GetLength(1)];
+        for (int i = 0; i < fields.GetLength(0); i++)
+        {
+            for (int j = 0; j < fields.GetLength(1); j++)
+            {
+                new_fields[i, j] = fields[i, j].Clone();
+            }
+        }
+        return new_fields;
     }
 
-    List<Field> getMoves(Field f, bool threatened)
+    List<Field> getMoves(Field[,] fields, Field f)
     {
-        return getMoves(f, threatened, true);
+        return getMoves(fields, f, false);
     }
 
-    List<Field> getMoves(Field f, bool threatened, bool checkForChess)
+    List<Field> getMoves(Field[,] fields, Field f, bool threatened)
+    {
+        return getMoves(fields, f, threatened, true);
+    }
+
+    List<Field> getMoves(Field[,] fields, Field f, bool threatened, bool checkForChess)
     {
         List<Field> fs = new List<Field>();
 
@@ -829,36 +842,36 @@ public class Pieces : MonoBehaviour
             return fs;
         }
 
-        if (checkForChess)
+        /*if (checkForChess)
         {
-            if (isChess() && !pieceIsType(getPiece(f), "King"))
+            if (isChess(fields) && !pieceIsType(getPiece(f), "King"))
             {
                 return fs;
             }
-        } 
+        } */
 
         if (pieceIsType(p, "Pawn"))
         {
-            fs = getPawnMoves(f.player, f, threatened);
+            fs = getPawnMoves(fields, f.player, f, threatened);
         }
         else if (pieceIsType(p, "Rook"))
         {
-            fs = getHorizontalMoves(f.player, f);
-            fs.AddRange(getVerticalMoves(f.player, f));
+            fs = getHorizontalMoves(fields, f.player, f);
+            fs.AddRange(getVerticalMoves(fields, f.player, f));
         }
         else if (pieceIsType(p, "Knight"))
         {
-            fs = getKnightMoves(f.player, f);
+            fs = getKnightMoves(fields, f.player, f);
         }
         else if (pieceIsType(p, "Bishop"))
         {
-            fs = getDiagonalMoves(f.player, f);
+            fs = getDiagonalMoves(fields, f.player, f);
         }
         else if (pieceIsType(p, "Queen"))
         {
-            fs = getDiagonalMoves(f.player, f);
-            fs.AddRange(getHorizontalMoves(f.player, f));
-            fs.AddRange(getVerticalMoves(f.player, f));
+            fs = getDiagonalMoves(fields, f.player, f);
+            fs.AddRange(getHorizontalMoves(fields, f.player, f));
+            fs.AddRange(getVerticalMoves(fields, f.player, f));
         }
         else if (pieceIsType(p, "King"))
         {
@@ -868,7 +881,7 @@ public class Pieces : MonoBehaviour
             }
             else
             {
-                fs = getKingMoves(f.player, f);
+                fs = getKingMoves(fields, f.player, f);
             }
         }
 
@@ -888,6 +901,30 @@ public class Pieces : MonoBehaviour
             }
         }
 
+        if (checkForChess)
+        {
+            foreach (Field field in fs)
+            {
+                Field[,] new_fields = cloneFields(fields);
+
+                Field f1 = new_fields[f.col, f.row];
+                Field f2 = new_fields[field.col, field.row];
+
+                f2.no = f1.no;
+                f2.player = f1.player;
+
+                f1.player = Field.EMPTY;
+
+                if (isChess(new_fields))
+                {
+                    if (!removals.Contains(field))
+                    {
+                        removals.Add(field);
+                    }
+                }
+            }
+        }
+
         foreach (Field field in removals)
         {
             fs.Remove(field);
@@ -896,13 +933,13 @@ public class Pieces : MonoBehaviour
         return fs;
     }
 
-    bool isChess()
+    bool isChess(Field[,] fields)
     {
         foreach (Field f in fields)
         {
             if (f.player != Field.EMPTY && f.player != player)
             {
-                List<Field> moves = getMoves(f, true, false);
+                List<Field> moves = getMoves(fields, f, true, false);
                 foreach (Field fi in moves)
                 {
                     if (f.row == 3 && f.col == 1)
@@ -944,7 +981,7 @@ public class Pieces : MonoBehaviour
 
         if (f.player == Field.WHITE || f.player == Field.BLACK)
         {
-            List<Field> fs = getMoves(f);
+            List<Field> fs = getMoves(fields, f);
             highlight2Fields(fs);
         }
     }
@@ -1156,7 +1193,7 @@ public class Pieces : MonoBehaviour
                 {
                     Field f = getFieldByField();
 
-                    List<Field> allMoves = getMoves(selectedField);
+                    List<Field> allMoves = getMoves(fields, selectedField);
                     if (allMoves.Contains(f))
                     {
                         checkCastling(f);

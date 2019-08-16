@@ -139,4 +139,15 @@ public class Field
         Vector3 fieldPos3 = new Vector3(fieldPos.x, fieldHighlighter.transform.position.y, fieldPos.y);
         fieldHighlighter.transform.position = new Vector3(fieldPos.x, fieldHighlighter.transform.position.y, fieldPos.y);
     }
+
+    public Field Clone()
+    {
+        Field new_field = new Field(col, row);
+        new_field.player = this.player;
+        new_field.no = this.no;
+        //new_field.highlight1 = this._highlight1;
+        //new_field.highlight2 = this._highlight2;
+        //new_field.highlight3 = this._highlight3;
+        return new_field;
+    }
 }
