@@ -160,7 +160,10 @@ public class Pieces : MonoBehaviour
         {
             f.highlight1 = false;
         }
-        field.highlight1 = true;
+        if (field != null)
+        {
+            field.highlight1 = true;
+        }
     }
 
     void highlightPiece(Field field)
@@ -227,6 +230,10 @@ public class Pieces : MonoBehaviour
 
     Piece getPiece(Field f)
     {
+        if (f == null)
+        {
+            return null;
+        }
         if (f.player == Field.WHITE)
         {
             return (whitePieces[f.no]);
@@ -1168,11 +1175,10 @@ public class Pieces : MonoBehaviour
         if (selectedField == null)
         {
             Field f = getFieldByPiece();
+            highlightField(f);
+            highlightPiece(f);
             if (f != null)
             {
-                highlightField(f);
-                highlightPiece(f);
-
                 if (Input.GetMouseButtonDown(0) && myTurn)
                 {
                     if (f != null)
