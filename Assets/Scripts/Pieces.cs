@@ -32,7 +32,8 @@ public class Pieces : MonoBehaviour
     public Camera cameraWhiteTop;
     public Camera cameraBlackTop;
 
-    public bool active = false;
+    public bool connected = false;
+    public bool roomJoined = false;
     public bool gameEnded = false;
     public bool gameStarted = false;
     public bool won = false;
@@ -1984,7 +1985,7 @@ public class Pieces : MonoBehaviour
     {
         setCameras();
 
-        if (!active)
+        if (!connected)
         {
             turnAllCentreTextsOff();
             panelLoad.SetActive(true);
@@ -1993,6 +1994,11 @@ public class Pieces : MonoBehaviour
         else
         {
             panelLoad.SetActive(false);
+        }
+
+        if (!roomJoined)
+        {
+            return;
         }
 
         if (!roomFull)

@@ -10,11 +10,12 @@ public class Networking : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("connected to master");
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = true;
-        roomOptions.MaxPlayers = 2;
-        PhotonNetwork.JoinOrCreateRoom("Room1", roomOptions, TypedLobby.Default);
+        Debug.Log("Connected to master");
+        UI ui = gameObject.GetComponent<UI>();
+        ui.showRoomSelection();
+
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.connected = true;
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -27,8 +28,6 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         base.OnJoinedRoom();
         Debug.Log("Joined room");
-        Pieces p = gameObject.GetComponent<Pieces>();
-        p.active = true;
 
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         Pieces pieces = gameObject.GetComponent<Pieces>();
@@ -50,7 +49,7 @@ public class Networking : MonoBehaviourPunCallbacks
         base.OnCreatedRoom();
         Debug.Log("Created room");
         Pieces p = gameObject.GetComponent<Pieces>();
-        p.active = true;
+        p.connected = true;
     }
 
     [PunRPC]

@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class UI : MonoBehaviour
 {
     public GameObject panelRestart;
     public GameObject panelRoomSelection;
+    public GameObject txtInputRoom;
 
     public void startGame()
     {
@@ -38,7 +40,18 @@ public class UI : MonoBehaviour
 
     public void joinRoom()
     {
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.IsVisible = true;
+        roomOptions.MaxPlayers = 2;
+        string roomName = txtInputRoom.GetComponent<Text>().text;
+        Debug.Log(roomName);
+        PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
 
+    }
+
+    public void showRoomSelection()
+    {
+        panelRoomSelection.SetActive(true);
     }
 
     public void restartWithoutRPC()
@@ -100,6 +113,7 @@ public class UI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        txtInputRoom = GameObject.Find("txtInputRoom");
         panelRestart = GameObject.Find("panelRestart");
         panelRestart.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");

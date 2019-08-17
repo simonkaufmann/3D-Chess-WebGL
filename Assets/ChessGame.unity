@@ -3884,7 +3884,7 @@ GameObject:
   - component: {fileID: 974721630}
   - component: {fileID: 974721629}
   m_Layer: 5
-  m_Name: Text
+  m_Name: txtInputRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4515,7 +4515,8 @@ MonoBehaviour:
   cameraBlack: {fileID: 1931755440}
   cameraWhiteTop: {fileID: 839242265}
   cameraBlackTop: {fileID: 1981934712}
-  active: 0
+  connected: 0
+  roomJoined: 0
   gameEnded: 0
   gameStarted: 0
   won: 0
@@ -4595,6 +4596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panelRestart: {fileID: 0}
   panelRoomSelection: {fileID: 0}
+  txtInputRoom: {fileID: 0}
 --- !u!1 &1109728050
 GameObject:
   m_ObjectHideFlags: 0
