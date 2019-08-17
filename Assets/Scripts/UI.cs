@@ -90,11 +90,10 @@ public class UI : MonoBehaviour
 
     public void toggleWhiteValueChanged()
     {
-        GameObject toggleWhite = GameObject.Find("toggleWhite");
-        Toggle tWhite = toggleWhite.GetComponent<Toggle>();
+        Pieces pieces = gameObject.GetComponent<Pieces>();
+        Toggle tWhite = pieces.toggleWhite.GetComponent<Toggle>();
 
-        GameObject toggleBlack = GameObject.Find("toggleBlack");
-        Toggle tBlack = toggleBlack.GetComponent<Toggle>();
+        Toggle tBlack = pieces.toggleBlack.GetComponent<Toggle>();
 
         Pieces p = gameObject.GetComponent<Pieces>();
 
@@ -112,11 +111,10 @@ public class UI : MonoBehaviour
     
     public void toggleBlackValueChanged()
     {
-        GameObject toggleWhite = GameObject.Find("toggleWhite");
-        Toggle tWhite = toggleWhite.GetComponent<Toggle>();
+        Pieces pieces = gameObject.GetComponent<Pieces>();
+        Toggle tWhite = pieces.toggleWhite.GetComponent<Toggle>();
 
-        GameObject toggleBlack = GameObject.Find("toggleBlack");
-        Toggle tBlack = toggleBlack.GetComponent<Toggle>();
+        Toggle tBlack = pieces.toggleBlack.GetComponent<Toggle>();
 
         Pieces p = gameObject.GetComponent<Pieces>();
 
