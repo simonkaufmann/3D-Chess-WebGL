@@ -31,6 +31,7 @@ public class Pieces : MonoBehaviour
 
     GameObject txtStatus;
     GameObject txtPawnPromotion;
+    GameObject txtCheck;
     Field fieldPawnPromotion = null;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
@@ -211,6 +212,8 @@ public class Pieces : MonoBehaviour
         txtStatus = GameObject.Find("txtStatus");
         txtPawnPromotion = GameObject.Find("txtPawnPromotion");
         txtPawnPromotion.SetActive(false);
+        txtCheck = GameObject.Find("txtCheck");
+        txtCheck.SetActive(false);
 
         /*foreach (Field f in fields)
         {
@@ -1567,6 +1570,11 @@ public class Pieces : MonoBehaviour
 
         checkKingMoved();
 
+        if (isCheck(fields))
+        {
+            txtCheck.SetActive(true);
+        }
+
         placePieces();
     }
 
@@ -1735,6 +1743,8 @@ public class Pieces : MonoBehaviour
             {
                 p.highlight3 = false;
             }
+
+            txtCheck.SetActive(false);
         }
 
         // None selected -> highlight field under cursor and if clicked select that field
