@@ -75,9 +75,9 @@ public class Piece
         var rend = gameObject.transform.GetChild(0).GetComponent<Renderer>();
         if (_highlight4 && _highlight2)
         {
-            rend.material.color = Field.AMBER;
+            rend.material.color = Field.AMBER_NONTRANSPARENT;
         }
-        else if (_highlight1 || _highlight2)
+        else if (_highlight1)
         {
             rend.material.color = Color.red;
         }

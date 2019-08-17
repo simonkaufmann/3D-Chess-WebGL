@@ -36,6 +36,7 @@ public class Pieces : MonoBehaviour
     public bool gameEnded = false;
     public bool gameStarted = false;
     public bool won = false;
+    public bool draw = false;
     public bool roomFull = false;
 
     GameObject txtStatus;
@@ -50,6 +51,7 @@ public class Pieces : MonoBehaviour
     GameObject buttonStartGame;
     public GameObject toggleWhite;
     public GameObject toggleBlack;
+    GameObject txtDraw;
     Field fieldPawnPromotion = null;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
@@ -250,22 +252,24 @@ public class Pieces : MonoBehaviour
         toggleWhite.SetActive(false);
         toggleBlack = GameObject.Find("toggleBlack");
         toggleBlack.SetActive(false);
+        txtDraw = GameObject.Find("txtDraw");
+        txtDraw.SetActive(false);
 
         foreach (Field f in fields)
         {
             f.player = Field.EMPTY;
             //f.highlight3 = true;
         }
-        fields[4, 5].player = Field.WHITE;
+        /*fields[4, 5].player = Field.WHITE;
         fields[4, 5].no = 11;
         fields[5, 6].player = Field.WHITE;
         fields[5, 6].no = 8;
         fields[6, 6].player = Field.WHITE;
-        fields[6, 6].no = 15;
+        fields[6, 6].no = 15;*/
         fields[7, 6].player = Field.WHITE;
         fields[7, 6].no = 7;
-        fields[0, 0].no = 11;
-        fields[0, 0].player = Field.BLACK;
+        fields[5, 5].no = 11;
+        fields[5, 5].player = Field.BLACK;
         fields[1, 1].no = 1;
         fields[1, 1].player = Field.BLACK;
         fields[2, 1].no = 2;
@@ -511,6 +515,30 @@ public class Pieces : MonoBehaviour
         foreach (Field f in fs)
         {
             f.highlight2 = true;
+        }
+    }
+
+    void highlight2Pieces(List<Field> fs)
+    {
+        foreach (Field field in fields)
+        {
+            Piece p = getPiece(field);
+            if (p != null)
+            {
+                p.highlight2 = false;
+            }
+        }
+        if (fs == null)
+        {
+            return;
+        }
+        foreach (Field f in fs)
+        {
+            Piece piece = getPiece(f);
+            if (piece != null)
+            {
+                piece.highlight2 = true;
+            }
         }
     }
 
@@ -906,7 +934,7 @@ public class Pieces : MonoBehaviour
 
         List<Field> allMoves = new List<Field>();
 
-        Field opponentKingField = fields[0, 0];
+        Field opponentKingField = null;
 
         foreach (Field f in fields)
         {
@@ -1214,6 +1242,9 @@ public class Pieces : MonoBehaviour
         if (f == null)
         {
             selectedField = null;
+            highlight2Fields(null);
+            highlight4Field(null);
+            highlight4Piece(null);
             return;
         }
 
@@ -1226,6 +1257,7 @@ public class Pieces : MonoBehaviour
         {
             List<Field> fs = getMoves(fields, f);
             highlight2Fields(fs);
+            highlight2Pieces(fs);
         }
     }
 
@@ -1594,11 +1626,23 @@ public class Pieces : MonoBehaviour
 
         if (allMoves.Count == 0)
         {
-            turnAllCentreTextsOff();
-            txtCheckmate.SetActive(true);
-            PhotonView photonView = gameObject.GetComponent<PhotonView>();
-            photonView.RPC("setWon", RpcTarget.OthersBuffered);
-            gameEnded = true;
+            if (isCheck(fields, player))
+            {
+                turnAllCentreTextsOff();
+                txtCheckmate.SetActive(true);
+                PhotonView photonView = gameObject.GetComponent<PhotonView>();
+                photonView.RPC("setWon", RpcTarget.OthersBuffered);
+                gameEnded = true;
+            }
+            else
+            {
+                turnAllCentreTextsOff();
+                txtDraw.SetActive(true);
+                PhotonView photonView = gameObject.GetComponent<PhotonView>();
+                photonView.RPC("setDraw", RpcTarget.OthersBuffered);
+                gameEnded = true;
+                draw = true;
+            }
         }
         else
         {
@@ -1859,6 +1903,10 @@ public class Pieces : MonoBehaviour
         {
             field.highlight4 = false;
         }
+        if (f == null)
+        {
+            return;
+        }
         f.highlight4 = true;
     }
 
@@ -1942,9 +1990,15 @@ public class Pieces : MonoBehaviour
             turnAllCentreTextsOff();
             txtWon.SetActive(true);
         }
+        else if (draw)
+        {
+            turnAllCentreTextsOff();
+            txtDraw.SetActive(true);
+        }
         else
         {
             txtWon.SetActive(false);
+            txtDraw.SetActive(false);
         }
     }
 
@@ -1955,6 +2009,8 @@ public class Pieces : MonoBehaviour
         txtCheckmate.SetActive(false);
         txtPawnPromotion.SetActive(false);
         txtWaitForPlayer.SetActive(false);
+        txtWon.SetActive(false);
+        txtDraw.SetActive(false);
     }
 
     // Update is called once per frame
@@ -2070,7 +2126,7 @@ public class Pieces : MonoBehaviour
         {
             if (turn == player)
             {
-                Field f = getFieldByPiece();
+                Field f = getFieldByField();
                 highlight4Field(f);
                 highlight4Piece(f);
 

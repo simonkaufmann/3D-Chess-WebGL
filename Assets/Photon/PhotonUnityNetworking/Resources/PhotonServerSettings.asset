@@ -42,5 +42,6 @@ MonoBehaviour:
   - setWhitePieces
   - setWon
   - setGameStarted
+  - setDraw
   DisableAutoOpenWizard: 1
   ShowSettings: 0

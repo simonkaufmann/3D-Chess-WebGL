@@ -75,14 +75,20 @@ public class Networking : MonoBehaviourPunCallbacks
     [PunRPC]
     public void setPlayer(int player)
     {
-        Toggle toggleWhite = GameObject.Find("toggleWhite").GetComponent<Toggle>();
+        Pieces pieces = gameObject.GetComponent<Pieces>();
+        bool whiteActive = pieces.toggleWhite.activeInHierarchy;
+        bool blackActive = pieces.toggleBlack.activeInHierarchy;
+        pieces.toggleWhite.SetActive(true);
+        pieces.toggleBlack.SetActive(true);
         if (player == Field.WHITE)
         {
-            toggleWhite.isOn = true;
+            pieces.toggleWhite.GetComponent<Toggle>().isOn = true;
         } else if (player == Field.BLACK)
         {
-            toggleWhite.isOn = false;
+            pieces.toggleWhite.GetComponent<Toggle>().isOn = false;
         }
+        pieces.toggleWhite.SetActive(whiteActive);
+        pieces.toggleBlack.SetActive(blackActive);
     }
 
     [PunRPC]
@@ -111,6 +117,14 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         Pieces p = gameObject.GetComponent<Pieces>();
         p.won = true;
+        p.gameEnded = true;
+    }
+
+    [PunRPC]
+    public void setDraw()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.draw = true;
         p.gameEnded = true;
     }
 
