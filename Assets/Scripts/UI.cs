@@ -158,20 +158,22 @@ public class UI : MonoBehaviour
             Player[] players = PhotonNetwork.PlayerListOthers;
             if (pieces.player == Field.WHITE)
             {
-                pieces.txtPlayerWhite.GetComponent<Text>().text = "Weiß: " + "Sie";
-                pieces.txtPlayerBlack.GetComponent<Text>().text = "Schwarz: ";
+                pieces.txtPlayerWhite.GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
+                pieces.txtTurnPlayerWhite.GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
                 if (players.Length >= 1)
                 {
-                    pieces.txtPlayerBlack.GetComponent<Text>().text += players[0].NickName;
+                    pieces.txtPlayerBlack.GetComponent<Text>().text = players[0].NickName;
+                    pieces.txtTurnPlayerBlack.GetComponent<Text>().text = players[0].NickName;
                 }
             }
             else
             {
-                pieces.txtPlayerBlack.GetComponent<Text>().text = "Schwarz: " + PhotonNetwork.LocalPlayer.NickName;
-                pieces.txtPlayerWhite.GetComponent<Text>().text = "Weiß: ";
+                pieces.txtPlayerBlack.GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
+                pieces.txtTurnPlayerBlack.GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
                 if (players.Length >= 1)
                 {
-                    pieces.txtPlayerWhite.GetComponent<Text>().text += players[0].NickName;
+                    pieces.txtPlayerWhite.GetComponent<Text>().text = players[0].NickName;
+                    pieces.txtTurnPlayerWhite.GetComponent<Text>().text = players[0].NickName;
                 }
             }
         }

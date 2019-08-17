@@ -46,8 +46,10 @@ public class Pieces : MonoBehaviour
     GameObject panelPawnPromotion;
     GameObject panelCheck;
     GameObject panelCheckmate;
-    GameObject txtTurnPlayerWhite;
-    GameObject txtTurnPlayerBlack;
+    public GameObject txtTurnPlayerWhite;
+    public GameObject txtTurnPlayerBlack;
+    GameObject panelTurnPlayerWhite;
+    GameObject panelTurnPlayerBlack;
     GameObject panelWon;
     GameObject panelWaitForPlayer;
     public GameObject toggleWhite;
@@ -243,6 +245,8 @@ public class Pieces : MonoBehaviour
         panelCheckmate.SetActive(false);
         txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
         txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
+        panelTurnPlayerWhite = GameObject.Find("panelTurnPlayerWhite");
+        panelTurnPlayerBlack = GameObject.Find("panelTurnPlayerBlack");
         panelWon = GameObject.Find("panelWon");
         panelWon.SetActive(false);
         panelWaitForPlayer = GameObject.Find("panelWaitForPlayer");
@@ -1929,12 +1933,16 @@ public class Pieces : MonoBehaviour
             if (turn == Field.WHITE)
             {
                 txtTurnPlayerWhite.SetActive(true);
+                panelTurnPlayerWhite.SetActive(true);
                 txtTurnPlayerBlack.SetActive(false);
+                panelTurnPlayerBlack.SetActive(false);
             }
             else
             {
                 txtTurnPlayerBlack.SetActive(true);
+                panelTurnPlayerBlack.SetActive(true);
                 txtTurnPlayerWhite.SetActive(false);
+                panelTurnPlayerWhite.SetActive(false);
             }
             return true;
         } else
