@@ -260,24 +260,19 @@ public class Pieces : MonoBehaviour
             f.player = Field.EMPTY;
             //f.highlight3 = true;
         }
-        /*fields[4, 5].player = Field.WHITE;
-        fields[4, 5].no = 11;
-        fields[5, 6].player = Field.WHITE;
-        fields[5, 6].no = 8;
-        fields[6, 6].player = Field.WHITE;
-        fields[6, 6].no = 15;*/
+        fields[4, 0].player = Field.WHITE;
+        fields[4, 0].no = 12;
+        fields[5, 0].player = Field.WHITE;
+        fields[5, 0].no = 8;
+        fields[6, 0].player = Field.WHITE;
+        fields[6, 0].no = 15;
         fields[7, 6].player = Field.WHITE;
         fields[7, 6].no = 7;
-        fields[5, 5].no = 11;
-        fields[5, 5].player = Field.BLACK;
+        fields[5, 7].no = 11;
+        fields[5, 7].player = Field.BLACK;
         fields[1, 1].no = 1;
-        fields[1, 1].player = Field.BLACK;
-        fields[2, 1].no = 2;
-        fields[1, 1].player = Field.BLACK;
-        fields[3, 1].no = 3;
-        fields[3, 1].player = Field.BLACK;
-        fields[4, 1].no = 4;
-        fields[4, 1].player = Field.BLACK;
+        fields[1, 6].player = Field.BLACK;
+        fields[2, 6].no = 2;
         placePieces();
     }
 
@@ -934,7 +929,7 @@ public class Pieces : MonoBehaviour
 
         List<Field> allMoves = new List<Field>();
 
-        Field opponentKingField = null;
+        Field opponentKingField = new Field(0, 0);
 
         foreach (Field f in fields)
         {
@@ -1358,7 +1353,7 @@ public class Pieces : MonoBehaviour
                     typesWhitePieces[fieldPawnPromotion.no] = typesWhitePieces[i];
                 } else if (player == Field.BLACK)
                 {
-                    for (int j = 0; j < blackPieces.Length; j++)
+                    for (int j = blackPieces.Length - 1; j >= 0; j--)
                     {
                         if (typesWhitePieces[i].Equals(typesBlackPieces[j]))
                         {
@@ -1391,7 +1386,7 @@ public class Pieces : MonoBehaviour
                 }
                 else if (player == Field.WHITE)
                 {
-                    for (int j = 0; j < whitePieces.Length; j++)
+                    for (int j = whitePieces.Length - 1; j >= 0; j--)
                     {
                         if (typesBlackPieces[i].Equals(typesWhitePieces[j]))
                         {
@@ -1983,6 +1978,22 @@ public class Pieces : MonoBehaviour
         }
     }
 
+    void deleteHighlight3()
+    {
+        foreach (Field f in fields)
+        {
+            f.highlight3 = false;
+        }
+        foreach (Piece p in whitePieces)
+        {
+            p.highlight3 = false;
+        }
+        foreach (Piece p in blackPieces)
+        {
+            p.highlight3 = false;
+        }
+    }
+
     void checkWon()
     {
         if (won)
@@ -2057,25 +2068,15 @@ public class Pieces : MonoBehaviour
             highlightPiece((Field) null);
             highlight4Piece(null);
             highlight2Fields(null);
+            deleteHighlight3();
+      
             return;
         }
 
         // Delete green highlighting from received fields after every click
         if (Input.GetMouseButtonDown(0))
         {
-            foreach (Field f in fields)
-            {
-                f.highlight3 = false;
-            }
-            foreach (Piece p in whitePieces)
-            {
-                p.highlight3 = false;
-            }
-            foreach (Piece p in blackPieces)
-            {
-                p.highlight3 = false;
-            }
-
+            deleteHighlight3();
             txtCheck.SetActive(false);
         }
 
