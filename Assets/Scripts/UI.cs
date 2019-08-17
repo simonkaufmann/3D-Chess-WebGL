@@ -33,8 +33,6 @@ public class UI : MonoBehaviour
 
     public void restartYes()
     {
-        PhotonView photonView = gameObject.GetComponent<PhotonView>();
-        photonView.RPC("sendRestart", RpcTarget.OthersBuffered);
         restartWithoutRPC();
     }
 
@@ -45,7 +43,7 @@ public class UI : MonoBehaviour
 
     public void roomJoinError(string message)
     {
-        txtRoomError.GetComponent<Text>().text = message;
+        txtRoomError.GetComponent<Text>().text =  "Fehler: " + message;
     }
 
     public void joinRoom()
@@ -155,6 +153,9 @@ public class UI : MonoBehaviour
         {
             PhotonView photonView = gameObject.GetComponent<PhotonView>();
             Pieces pieces = gameObject.GetComponent<Pieces>();
+
+            pieces.txtWaitForPlayerRoomName.GetComponent<Text>().text = "Spielname: " + room.Name;
+
             Player[] players = PhotonNetwork.PlayerListOthers;
             if (pieces.player == Field.WHITE)
             {

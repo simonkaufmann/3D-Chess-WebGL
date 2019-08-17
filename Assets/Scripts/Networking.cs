@@ -133,12 +133,6 @@ public class Networking : MonoBehaviourPunCallbacks
         p.gameEnded = true;
     }
 
-    [PunRPC]
-    public void sendRestart()
-    {
-        gameObject.GetComponent<UI>().restartWithoutRPC();
-    }
-
     // Start is called before the first frame update
     void Start()
     {

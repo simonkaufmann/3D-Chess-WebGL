@@ -40,6 +40,7 @@ public class Pieces : MonoBehaviour
     public bool draw = false;
     public bool roomFull = false;
 
+    public GameObject txtWaitForPlayerRoomName;
     public GameObject txtPlayerWhite;
     public GameObject txtPlayerBlack;
     GameObject panelLoad;
@@ -234,6 +235,7 @@ public class Pieces : MonoBehaviour
 
         initialisePieces(whitePieces, blackPieces);
 
+        txtWaitForPlayerRoomName = GameObject.Find("txtWaitForPlayerRoomName");
         txtPlayerWhite = GameObject.Find("txtPlayerWhite");
         txtPlayerBlack = GameObject.Find("txtPlayerBlack");
         panelLoad = GameObject.Find("panelLoad");
@@ -245,8 +247,10 @@ public class Pieces : MonoBehaviour
         panelCheckmate.SetActive(false);
         txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
         txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
+        txtTurnPlayerBlack.SetActive(false);
         panelTurnPlayerWhite = GameObject.Find("panelTurnPlayerWhite");
         panelTurnPlayerBlack = GameObject.Find("panelTurnPlayerBlack");
+        panelTurnPlayerBlack.SetActive(false);
         panelWon = GameObject.Find("panelWon");
         panelWon.SetActive(false);
         panelWaitForPlayer = GameObject.Find("panelWaitForPlayer");
@@ -1928,7 +1932,6 @@ public class Pieces : MonoBehaviour
         if (gameStarted)
         {
             panelChooseColour.SetActive(false);
-            panelTurn.SetActive(true);
 
             if (turn == Field.WHITE)
             {
@@ -1949,7 +1952,6 @@ public class Pieces : MonoBehaviour
         {
             turnAllCentreTextsOff();
             panelChooseColour.SetActive(true);
-            panelTurn.SetActive(false);
             return false;
         }
     }
@@ -2012,6 +2014,7 @@ public class Pieces : MonoBehaviour
         if (!connected)
         {
             turnAllCentreTextsOff();
+            panelTurn.SetActive(false);
             panelLoad.SetActive(true);
             return;
         }
@@ -2022,8 +2025,11 @@ public class Pieces : MonoBehaviour
 
         if (!roomJoined)
         {
+            panelTurn.SetActive(false);
             return;
         }
+
+        panelTurn.SetActive(true);
 
         if (!roomFull)
         {
