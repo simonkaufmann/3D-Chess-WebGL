@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
+    public GameObject panelRestart;
+    public GameObject panelRoomSelection;
+
     public void startGame()
     {
         Pieces p = gameObject.GetComponent<Pieces>();
@@ -21,6 +24,21 @@ public class UI : MonoBehaviour
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("sendRestart", RpcTarget.OthersBuffered);
         restartWithoutRPC();
+    }
+
+    public void restartYes()
+    {
+
+    }
+
+    public void restartNo()
+    {
+
+    }
+
+    public void joinRoom()
+    {
+
     }
 
     public void restartWithoutRPC()
@@ -82,7 +100,9 @@ public class UI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        panelRestart = GameObject.Find("panelRestart");
+        panelRestart.SetActive(false);
+        panelRoomSelection = GameObject.Find("panelRoomSelection");
     }
 
     // Update is called once per frame
