@@ -53,6 +53,8 @@ public class Pieces : MonoBehaviour
     public GameObject toggleBlack;
     GameObject txtDraw;
     Field fieldPawnPromotion = null;
+    GameObject panelChooseColour;
+    GameObject panelTurn;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
 
@@ -237,23 +239,21 @@ public class Pieces : MonoBehaviour
         txtCheckmate = GameObject.Find("txtCheckmate");
         txtCheckmate.SetActive(false);
         txtTurn = GameObject.Find("txtTurn");
-        txtTurn.SetActive(false);
         txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
-        txtTurnPlayerWhite.SetActive(false);
         txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
-        txtTurnPlayerBlack.SetActive(false);
         txtWon = GameObject.Find("txtWon");
         txtWon.SetActive(false);
         txtWaitForPlayer = GameObject.Find("txtWaitForPlayer");
         txtWaitForPlayer.SetActive(false);
         buttonStartGame = GameObject.Find("buttonStartGame");
-        buttonStartGame.SetActive(false);
         toggleWhite = GameObject.Find("toggleWhite");
-        toggleWhite.SetActive(false);
         toggleBlack = GameObject.Find("toggleBlack");
-        toggleBlack.SetActive(false);
         txtDraw = GameObject.Find("txtDraw");
         txtDraw.SetActive(false);
+        panelTurn = GameObject.Find("panelTurn");
+        panelTurn.SetActive(false);
+        panelChooseColour = GameObject.Find("panelChooseColour");
+        panelChooseColour.SetActive(false);
 
         foreach (Field f in fields)
         {
@@ -1743,16 +1743,6 @@ public class Pieces : MonoBehaviour
 
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = true;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = false;
-
-            Image img = GameObject.Find("panelTurn").GetComponent<Image>();
-            if (turn == player)
-            {
-                img.color = Color.white;
-            }
-            else
-            {
-                img.color = Color.black;
-            }
         }
         else
         {
@@ -1770,26 +1760,6 @@ public class Pieces : MonoBehaviour
             }
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = false;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
-
-            Image img = GameObject.Find("panelTurn").GetComponent<Image>();
-            if (turn == player)
-            {
-                img.color = Color.black;
-                if (gameStarted)
-                {
-                    txtTurnPlayerBlack.SetActive(true);
-                }
-                txtTurnPlayerWhite.SetActive(false);
-            }
-            else
-            {
-                img.color = Color.white;
-                txtTurnPlayerBlack.SetActive(false);
-                if (gameStarted)
-                {
-                    txtTurnPlayerWhite.SetActive(true);
-                }
-            }
         }
     }
 
@@ -1952,28 +1922,13 @@ public class Pieces : MonoBehaviour
     {
         if (gameStarted)
         {
-            toggleWhite.gameObject.SetActive(false);
-            toggleBlack.gameObject.SetActive(false);
-            txtTurn.SetActive(true);
-            if (turn == Field.WHITE)
-            {
-                txtTurnPlayerWhite.SetActive(true);
-                txtTurnPlayerBlack.SetActive(false);
-            } else
-            {
-                txtTurnPlayerBlack.SetActive(true);
-                txtTurnPlayerWhite.SetActive(false);
-            }
-            buttonStartGame.SetActive(false);
+            panelChooseColour.SetActive(false);
+            panelTurn.SetActive(true);
             return true;
         } else
         {
-            toggleWhite.gameObject.SetActive(true);
-            toggleBlack.gameObject.SetActive(true);
-            txtTurn.SetActive(false);
-            txtTurnPlayerWhite.SetActive(false);
-            txtTurnPlayerBlack.SetActive(false);
-            buttonStartGame.SetActive(true);
+            panelChooseColour.SetActive(true);
+            panelTurn.SetActive(false);
             return false;
         }
     }
