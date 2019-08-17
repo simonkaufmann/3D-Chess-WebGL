@@ -1969,7 +1969,7 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    void turnAllCentreTextsOff()
+    public void turnAllCentreTextsOff()
     {
         panelLoad.SetActive(false);
         panelCheck.SetActive(false);
@@ -1978,6 +1978,9 @@ public class Pieces : MonoBehaviour
         panelWaitForPlayer.SetActive(false);
         panelWon.SetActive(false);
         panelDraw.SetActive(false);
+        UI ui = gameObject.GetComponent<UI>();
+        ui.hideRestartDialog();
+        ui.hideRoomSelection();
     }
 
     // Update is called once per frame

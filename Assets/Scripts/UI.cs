@@ -24,19 +24,19 @@ public class UI : MonoBehaviour
 
     public void restart()
     {
+        showRestartDialog();
+    }
+
+    public void restartYes()
+    {
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("sendRestart", RpcTarget.OthersBuffered);
         restartWithoutRPC();
     }
 
-    public void restartYes()
-    {
-
-    }
-
     public void restartNo()
     {
-
+        hideRestartDialog();
     }
 
     public void roomJoinError(string message)
@@ -56,12 +56,26 @@ public class UI : MonoBehaviour
 
     public void showRoomSelection()
     {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.turnAllCentreTextsOff();
         panelRoomSelection.SetActive(true);
     }
 
     public void hideRoomSelection()
     {
         panelRoomSelection.SetActive(false);
+    }
+
+    public void showRestartDialog()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.turnAllCentreTextsOff();
+        panelRestart.SetActive(true);
+    }
+
+    public void hideRestartDialog()
+    {
+        panelRestart.SetActive(false);
     }
 
     public void restartWithoutRPC()
