@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI : MonoBehaviour
@@ -13,6 +14,19 @@ public class UI : MonoBehaviour
 
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("setGameStarted", RpcTarget.OthersBuffered);
+    }
+
+    public void restart()
+    {
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        photonView.RPC("sendRestart", RpcTarget.OthersBuffered);
+        restartWithoutRPC();
+    }
+
+    public void restartWithoutRPC()
+    {
+        PhotonNetwork.Disconnect();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void toggleWhiteValueChanged()
