@@ -12,6 +12,10 @@ public class UI : MonoBehaviour
     public GameObject panelRoomSelection;
     public GameObject txtInputRoom;
     public GameObject txtRoomError;
+    public GameObject txtInputPlayerName;
+
+    public string username;
+    public string otherUsername;
 
     public void startGame()
     {
@@ -46,12 +50,14 @@ public class UI : MonoBehaviour
 
     public void joinRoom()
     {
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        PhotonNetwork.LocalPlayer.NickName = txtInputPlayerName.GetComponent<Text>().text;
+
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 2;
         string roomName = txtInputRoom.GetComponent<Text>().text;
         PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
-
     }
 
     public void showRoomSelection()
@@ -99,12 +105,10 @@ public class UI : MonoBehaviour
         {
             tBlack.isOn = false;
             p.player = Field.WHITE;
-            //photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
         } else
         {
             tBlack.isOn = true;
             p.player = Field.BLACK;
-            //photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
         }
     }
     
@@ -117,20 +121,16 @@ public class UI : MonoBehaviour
         Toggle tBlack = toggleBlack.GetComponent<Toggle>();
 
         Pieces p = gameObject.GetComponent<Pieces>();
-        //p.myTurn = !p.myTurn;
 
-        //PhotonView photonView = gameObject.GetComponent<PhotonView>();
         if (tBlack.isOn)
         {
             p.player = Field.BLACK;
             tWhite.isOn = false;
-            //photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
         }
         else
         {
             p.player = Field.WHITE;
             tWhite.isOn = true;
-            //photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
         }
     }
 
@@ -139,6 +139,7 @@ public class UI : MonoBehaviour
     {
         txtInputRoom = GameObject.Find("txtInputRoom");
         txtRoomError = GameObject.Find("txtRoomError");
+        txtInputPlayerName = GameObject.Find("txtInputPlayerName");
         panelRestart = GameObject.Find("panelRestart");
         panelRestart.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");
@@ -148,6 +149,31 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Room room = PhotonNetwork.CurrentRoom;
+
+        if (room != null)
+        {
+            PhotonView photonView = gameObject.GetComponent<PhotonView>();
+            Pieces pieces = gameObject.GetComponent<Pieces>();
+            Player[] players = PhotonNetwork.PlayerListOthers;
+            if (pieces.player == Field.WHITE)
+            {
+                pieces.txtPlayerWhite.GetComponent<Text>().text = "Weiß: " + "Sie";
+                pieces.txtPlayerBlack.GetComponent<Text>().text = "Schwarz: ";
+                if (players.Length >= 1)
+                {
+                    pieces.txtPlayerBlack.GetComponent<Text>().text += players[0].NickName;
+                }
+            }
+            else
+            {
+                pieces.txtPlayerBlack.GetComponent<Text>().text = "Schwarz: " + PhotonNetwork.LocalPlayer.NickName;
+                pieces.txtPlayerWhite.GetComponent<Text>().text = "Weiß: ";
+                if (players.Length >= 1)
+                {
+                    pieces.txtPlayerWhite.GetComponent<Text>().text += players[0].NickName;
+                }
+            }
+        }
     }
 }

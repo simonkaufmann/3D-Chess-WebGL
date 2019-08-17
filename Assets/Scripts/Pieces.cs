@@ -40,16 +40,16 @@ public class Pieces : MonoBehaviour
     public bool draw = false;
     public bool roomFull = false;
 
+    public GameObject txtPlayerWhite;
+    public GameObject txtPlayerBlack;
     GameObject panelLoad;
     GameObject panelPawnPromotion;
     GameObject panelCheck;
     GameObject panelCheckmate;
-    GameObject txtTurn;
     GameObject txtTurnPlayerWhite;
     GameObject txtTurnPlayerBlack;
     GameObject panelWon;
     GameObject panelWaitForPlayer;
-    GameObject buttonStartGame;
     public GameObject toggleWhite;
     public GameObject toggleBlack;
     GameObject panelDraw;
@@ -232,6 +232,8 @@ public class Pieces : MonoBehaviour
 
         initialisePieces(whitePieces, blackPieces);
 
+        txtPlayerWhite = GameObject.Find("txtPlayerWhite");
+        txtPlayerBlack = GameObject.Find("txtPlayerBlack");
         panelLoad = GameObject.Find("panelLoad");
         panelPawnPromotion = GameObject.Find("panelPawnPromotion");
         panelPawnPromotion.SetActive(false);
@@ -239,14 +241,12 @@ public class Pieces : MonoBehaviour
         panelCheck.SetActive(false);
         panelCheckmate = GameObject.Find("panelCheckmate");
         panelCheckmate.SetActive(false);
-        txtTurn = GameObject.Find("txtTurn");
         txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
         txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
         panelWon = GameObject.Find("panelWon");
         panelWon.SetActive(false);
         panelWaitForPlayer = GameObject.Find("panelWaitForPlayer");
         panelWaitForPlayer.SetActive(false);
-        buttonStartGame = GameObject.Find("buttonStartGame");
         toggleWhite = GameObject.Find("toggleWhite");
         toggleBlack = GameObject.Find("toggleBlack");
         panelDraw = GameObject.Find("panelDraw");
@@ -256,7 +256,7 @@ public class Pieces : MonoBehaviour
         panelChooseColour = GameObject.Find("panelChooseColour");
         panelChooseColour.SetActive(false);
 
-        foreach (Field f in fields)
+        /*foreach (Field f in fields)
         {
             f.player = Field.EMPTY;
             //f.highlight3 = true;
@@ -269,12 +269,12 @@ public class Pieces : MonoBehaviour
         fields[6, 0].no = 15;
         fields[7, 6].player = Field.WHITE;
         fields[7, 6].no = 7;
-        fields[5, 7].no = 11;
-        fields[5, 7].player = Field.BLACK;
+        fields[7, 7].no = 11;
+        fields[7, 7].player = Field.BLACK;
         fields[1, 1].no = 1;
         fields[1, 6].player = Field.BLACK;
         fields[2, 6].no = 2;
-        placePieces();
+        placePieces();*/
     }
 
     void highlightField(Field field)
@@ -1925,6 +1925,17 @@ public class Pieces : MonoBehaviour
         {
             panelChooseColour.SetActive(false);
             panelTurn.SetActive(true);
+
+            if (turn == Field.WHITE)
+            {
+                txtTurnPlayerWhite.SetActive(true);
+                txtTurnPlayerWhite.SetActive(false);
+            }
+            else
+            {
+                txtTurnPlayerBlack.SetActive(true);
+                txtTurnPlayerWhite.SetActive(false);
+            }
             return true;
         } else
         {
