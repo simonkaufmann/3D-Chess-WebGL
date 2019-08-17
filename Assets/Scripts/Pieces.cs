@@ -220,12 +220,12 @@ public class Pieces : MonoBehaviour
         txtCheck = GameObject.Find("txtCheck");
         txtCheck.SetActive(false);
 
-        foreach (Field f in fields)
+        /*foreach (Field f in fields)
         {
             //f.player = Field.EMPTY;
             f.highlight3 = true;
         }
-        /*fields[4, 5].player = Field.WHITE;
+        fields[4, 5].player = Field.WHITE;
         fields[4, 5].no = 4;
         fields[5, 6].player = Field.WHITE;
         fields[5, 6].no = 5;
