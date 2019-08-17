@@ -22,6 +22,9 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         base.OnJoinRoomFailed(returnCode, message);
         Debug.Log(message);
+
+        UI ui = gameObject.GetComponent<UI>();
+        ui.roomJoinError(message);
     }
 
     public override void OnJoinedRoom()
@@ -29,6 +32,13 @@ public class Networking : MonoBehaviourPunCallbacks
         base.OnJoinedRoom();
         Debug.Log("Joined room");
 
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.roomJoined = true;
+
+        UI ui = gameObject.GetComponent<UI>();
+        ui.hideRoomSelection();
+
+        // If other player already in game, then choose colour black for own player
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         Pieces pieces = gameObject.GetComponent<Pieces>();
         Room room = PhotonNetwork.CurrentRoom;

@@ -11,6 +11,7 @@ public class UI : MonoBehaviour
     public GameObject panelRestart;
     public GameObject panelRoomSelection;
     public GameObject txtInputRoom;
+    public GameObject txtRoomError;
 
     public void startGame()
     {
@@ -38,13 +39,17 @@ public class UI : MonoBehaviour
 
     }
 
+    public void roomJoinError(string message)
+    {
+        txtRoomError.GetComponent<Text>().text = message;
+    }
+
     public void joinRoom()
     {
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 2;
         string roomName = txtInputRoom.GetComponent<Text>().text;
-        Debug.Log(roomName);
         PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
 
     }
@@ -52,6 +57,11 @@ public class UI : MonoBehaviour
     public void showRoomSelection()
     {
         panelRoomSelection.SetActive(true);
+    }
+
+    public void hideRoomSelection()
+    {
+        panelRoomSelection.SetActive(false);
     }
 
     public void restartWithoutRPC()
@@ -114,6 +124,7 @@ public class UI : MonoBehaviour
     void Start()
     {
         txtInputRoom = GameObject.Find("txtInputRoom");
+        txtRoomError = GameObject.Find("txtRoomError");
         panelRestart = GameObject.Find("panelRestart");
         panelRestart.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");
