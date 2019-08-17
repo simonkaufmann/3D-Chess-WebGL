@@ -1364,11 +1364,6 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    void PromotePawn()
-    {
-
-    }
-
     void movePiece(Field f1, Field f2)
     {
         Field enpassant = movePieceEnpassant(f1, f2);
@@ -1701,6 +1696,15 @@ public class Pieces : MonoBehaviour
         placePieces();
     }
 
+    void highlight4Field(Field f)
+    {
+        foreach (Field field in fields)
+        {
+            field.highlight4 = false;
+        }
+        f.highlight4 = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -1780,10 +1784,11 @@ public class Pieces : MonoBehaviour
         {
             if (turn == player)
             {
+                Field f = getFieldByField();
+                highlight4Field(f);
+
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Field f = getFieldByField();
-
                     List<Field> allMoves = getMoves(fields, selectedField);
                     if (allMoves.Contains(f))
                     {

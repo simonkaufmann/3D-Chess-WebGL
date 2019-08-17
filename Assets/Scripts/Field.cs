@@ -27,6 +27,7 @@ public class Field
     private bool _highlight1;
     private bool _highlight2;
     private bool _highlight3;
+    private bool _highlight4;
 
     public bool highlight1
     {
@@ -70,6 +71,20 @@ public class Field
         }
     }
 
+    public bool highlight4
+    {
+        get
+        {
+            return _highlight4;
+        }
+
+        set
+        {
+            _highlight4 = value;
+            updateHighlight();
+        }
+    }
+
     GameObject fieldHighlighter;
 
     void updateHighlight()
@@ -83,7 +98,11 @@ public class Field
             rend.enabled = false;
         }
 
-        if (_highlight1 || _highlight2)
+        if (_highlight4 && _highlight2)
+        {
+            rend.material.color = new Color(255.0f / 255.0f, 239.0f / 255.0f, 0); // amber
+        }
+        else if (_highlight1 || _highlight2)
         {
             rend.material.color = Color.red;
         }
