@@ -18,6 +18,8 @@ public class Pieces : MonoBehaviour
     public int player = Field.WHITE;
     int oldPlayer = Field.WHITE;
 
+    bool cameraTop = false;
+
     public int turn = Field.WHITE;
 
     public bool blackCastlingSmall = true;
@@ -27,6 +29,8 @@ public class Pieces : MonoBehaviour
 
     public Camera cameraWhite;
     public Camera cameraBlack;
+    public Camera cameraWhiteTop;
+    public Camera cameraBlackTop;
 
     public bool active = false;
 
@@ -216,11 +220,12 @@ public class Pieces : MonoBehaviour
         txtCheck = GameObject.Find("txtCheck");
         txtCheck.SetActive(false);
 
-        /*foreach (Field f in fields)
+        foreach (Field f in fields)
         {
-            f.player = Field.EMPTY;
+            //f.player = Field.EMPTY;
+            f.highlight3 = true;
         }
-        fields[4, 5].player = Field.WHITE;
+        /*fields[4, 5].player = Field.WHITE;
         fields[4, 5].no = 4;
         fields[5, 6].player = Field.WHITE;
         fields[5, 6].no = 5;
@@ -1606,8 +1611,18 @@ public class Pieces : MonoBehaviour
     {
         if (player == Field.WHITE)
         {
-            cameraWhite.gameObject.SetActive(true);
+            cameraWhite.gameObject.SetActive(false);
             cameraBlack.gameObject.SetActive(false);
+            cameraWhiteTop.gameObject.SetActive(false);
+            cameraBlackTop.gameObject.SetActive(false);
+            if (cameraTop)
+            {
+                cameraWhiteTop.gameObject.SetActive(true);
+            }
+            else
+            {
+                cameraWhite.gameObject.SetActive(true);
+            }
 
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = true;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = false;
@@ -1625,8 +1640,17 @@ public class Pieces : MonoBehaviour
         else
         {
             cameraWhite.gameObject.SetActive(false);
-            cameraBlack.gameObject.SetActive(true);
-
+            cameraBlack.gameObject.SetActive(false);
+            cameraWhiteTop.gameObject.SetActive(false);
+            cameraBlackTop.gameObject.SetActive(false);
+            if (cameraTop)
+            {
+                cameraBlackTop.gameObject.SetActive(true);
+            }
+            else
+            {
+                cameraBlack.gameObject.SetActive(true);
+            }
             GameObject.Find("lightWhite").GetComponent<Light>().enabled = false;
             GameObject.Find("lightBlack").GetComponent<Light>().enabled = true;
 
@@ -1653,6 +1677,42 @@ public class Pieces : MonoBehaviour
         {
             turn = Field.WHITE;
         }
+    }
+
+    Field getFieldOfPiece(Piece p)
+    {
+        int colour = 0;
+        int no = 0;
+        bool pieceFound = false;
+        for (int i = 0; i < whitePieces.Length; i++)
+        {
+            if (Object.ReferenceEquals(whitePieces[i], p))
+            {
+                colour = Field.WHITE;
+                no = i;
+                pieceFound = true;
+            }
+        }
+        for (int i = 0; i < blackPieces.Length; i++)
+        {
+            if (Object.ReferenceEquals(blackPieces[i], p))
+            {
+                colour = Field.BLACK;
+                no = i;
+                pieceFound = true;
+            }
+        }
+        if (pieceFound)
+        {
+            foreach (Field f in fields)
+            {
+                if (f.player == colour && f.no == no)
+                {
+                    return f;
+                }
+            }
+        }
+        return null;
     }
 
     public void setWhitePieces(string[] whitePieces)
@@ -1714,6 +1774,49 @@ public class Pieces : MonoBehaviour
         f.highlight4 = true;
     }
 
+    void highlight4Piece(Field f)
+    {
+        foreach (Piece p in whitePieces)
+        {
+            p.highlight4 = false;
+        }
+        foreach (Piece p in blackPieces)
+        {
+            p.highlight4 = false;
+        }
+
+        Piece piece = getPiece(f);
+        if (piece != null)
+        {
+            piece.highlight4 = true;
+        }
+    }
+
+    void checkCameraTop()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            cameraTop = !cameraTop;
+        }
+    }
+
+    void checkPlayer()
+    {
+        if (player != oldPlayer)
+        {
+            PhotonView photonView = gameObject.GetComponent<PhotonView>();
+            if (player == Field.WHITE)
+            {
+                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
+            }
+            else if (player == Field.BLACK)
+            {
+                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
+            }
+        }
+        oldPlayer = player;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -1729,18 +1832,9 @@ public class Pieces : MonoBehaviour
             txtStatus.SetActive(false);
         }
 
-        if (player != oldPlayer)
-        {
-            PhotonView photonView = gameObject.GetComponent<PhotonView>();
-            if (player == Field.WHITE)
-            {
-                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
-            } else if (player == Field.BLACK)
-            {
-                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
-            }
-        }
-        oldPlayer = player;
+        checkCameraTop();
+
+        checkPlayer();
 
         // Delete green highlighting from received fields after every click
         if (Input.GetMouseButtonDown(0))
@@ -1808,8 +1902,9 @@ public class Pieces : MonoBehaviour
         {
             if (turn == player)
             {
-                Field f = getFieldByField();
+                Field f = getFieldByPiece();
                 highlight4Field(f);
+                highlight4Piece(f);
 
                 if (Input.GetMouseButtonDown(0))
                 {

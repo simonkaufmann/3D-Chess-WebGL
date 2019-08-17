@@ -19,6 +19,10 @@ public class Field
     public static int WHITE = 1;
     public static int BLACK = 2;
 
+    public static Color AMBER = new Color(255.0f / 255.0f, 239.0f / 255.0f, 0, 150.0f/255.0f);
+    public static Color GREEN = new Color(0 / 255.0f, 200.0f / 255.0f, 0, 150.0f / 255.0f);
+    public static Color RED = new Color(255.0f / 255.0f, 0 / 255.0f, 0, 150.0f / 255.0f);
+
     public int no;
     public int player;
 
@@ -100,19 +104,19 @@ public class Field
 
         if (_highlight4 && _highlight2)
         {
-            rend.material.color = new Color(255.0f / 255.0f, 239.0f / 255.0f, 0); // amber
+            rend.material.color = Field.AMBER;
         }
         else if (_highlight1 || _highlight2)
         {
-            rend.material.color = Color.red;
+            rend.material.color = RED;
         }
         else if (_highlight3)
         {
-            rend.material.color = Color.green;
+            rend.material.color = GREEN;
         }
         else
         {
-            rend.material.color = Color.red;
+            rend.material.color = RED;
         }
     }
 

@@ -9,6 +9,7 @@ public class Piece
     private bool _highlight1;
     private bool _highlight2;
     private bool _highlight3;
+    private bool _highlight4;
 
     public bool highlight1
     {
@@ -49,6 +50,20 @@ public class Piece
             updateHighlight();
         }
     }
+
+    public bool highlight4
+    {
+        get
+        {
+            return _highlight4;
+        }
+
+        set
+        {
+            _highlight4 = value;
+            updateHighlight();
+        }
+    }
     
     public Piece()
     {
@@ -58,7 +73,11 @@ public class Piece
     void updateHighlight()
     {
         var rend = gameObject.transform.GetChild(0).GetComponent<Renderer>();
-        if (_highlight1 || _highlight2)
+        if (_highlight4 && _highlight2)
+        {
+            rend.material.color = Field.AMBER;
+        }
+        else if (_highlight1 || _highlight2)
         {
             rend.material.color = Color.red;
         }
