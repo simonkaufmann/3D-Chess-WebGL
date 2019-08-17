@@ -44,13 +44,9 @@ public class Networking : MonoBehaviourPunCallbacks
         Room room = PhotonNetwork.CurrentRoom;
         if (room != null && room.PlayerCount == 2)
         {
-            bool whiteActive = pieces.toggleWhite.activeInHierarchy;
-            bool blackActive = pieces.toggleBlack.activeInHierarchy;
-            pieces.toggleWhite.SetActive(true);
-            pieces.toggleBlack.SetActive(true);
+            pieces.panelChooseColour.SetActive(true);
             pieces.toggleWhite.GetComponent<Toggle>().isOn = false;
-            pieces.toggleWhite.SetActive(whiteActive);
-            pieces.toggleBlack.SetActive(blackActive);
+            pieces.panelChooseColour.SetActive(false);
         }
     }
 

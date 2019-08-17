@@ -54,7 +54,7 @@ public class Pieces : MonoBehaviour
     public GameObject toggleBlack;
     GameObject panelDraw;
     Field fieldPawnPromotion = null;
-    GameObject panelChooseColour;
+    public GameObject panelChooseColour;
     GameObject panelTurn;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
@@ -1929,7 +1929,7 @@ public class Pieces : MonoBehaviour
             if (turn == Field.WHITE)
             {
                 txtTurnPlayerWhite.SetActive(true);
-                txtTurnPlayerWhite.SetActive(false);
+                txtTurnPlayerBlack.SetActive(false);
             }
             else
             {
@@ -1939,6 +1939,7 @@ public class Pieces : MonoBehaviour
             return true;
         } else
         {
+            turnAllCentreTextsOff();
             panelChooseColour.SetActive(true);
             panelTurn.SetActive(false);
             return false;
@@ -1982,6 +1983,7 @@ public class Pieces : MonoBehaviour
 
     public void turnAllCentreTextsOff()
     {
+        panelChooseColour.SetActive(false);
         panelLoad.SetActive(false);
         panelCheck.SetActive(false);
         panelCheckmate.SetActive(false);
@@ -2020,7 +2022,8 @@ public class Pieces : MonoBehaviour
             turnAllCentreTextsOff();
             panelWaitForPlayer.SetActive(true);
             return;
-        } else
+        }
+        else
         {
             panelWaitForPlayer.SetActive(false);
         }
