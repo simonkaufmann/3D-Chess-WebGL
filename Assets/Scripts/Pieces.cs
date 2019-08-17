@@ -16,6 +16,7 @@ public class Pieces : MonoBehaviour
     Field[,] oldFields;
 
     public int player = Field.WHITE;
+    int oldPlayer = Field.WHITE;
 
     public int turn = Field.WHITE;
 
@@ -1727,6 +1728,19 @@ public class Pieces : MonoBehaviour
         {
             txtStatus.SetActive(false);
         }
+
+        if (player != oldPlayer)
+        {
+            PhotonView photonView = gameObject.GetComponent<PhotonView>();
+            if (player == Field.WHITE)
+            {
+                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
+            } else if (player == Field.BLACK)
+            {
+                photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
+            }
+        }
+        oldPlayer = player;
 
         // Delete green highlighting from received fields after every click
         if (Input.GetMouseButtonDown(0))

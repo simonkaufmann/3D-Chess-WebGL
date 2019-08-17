@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Networking : MonoBehaviourPunCallbacks
 {
@@ -28,6 +29,16 @@ public class Networking : MonoBehaviourPunCallbacks
         Debug.Log("Joined room");
         Pieces p = gameObject.GetComponent<Pieces>();
         p.active = true;
+
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        Pieces pieces = gameObject.GetComponent<Pieces>();
+        if (pieces.player == Field.WHITE)
+        {
+            photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
+        } else if (pieces.player == Field.BLACK)
+        {
+            photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
+        }
     }
 
     public override void OnCreatedRoom()
@@ -53,8 +64,14 @@ public class Networking : MonoBehaviourPunCallbacks
     [PunRPC]
     public void setPlayer(int player)
     {
-        Pieces p = gameObject.GetComponent<Pieces>();
-        p.player = player;
+        Toggle toggleWhite = GameObject.Find("toggleWhite").GetComponent<Toggle>();
+        if (player == Field.WHITE)
+        {
+            toggleWhite.isOn = true;
+        } else if (player == Field.BLACK)
+        {
+            toggleWhite.isOn = false;
+        }
     }
 
     [PunRPC]
