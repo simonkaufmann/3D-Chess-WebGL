@@ -32,12 +32,16 @@ public class Networking : MonoBehaviourPunCallbacks
 
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
         Pieces pieces = gameObject.GetComponent<Pieces>();
-        if (pieces.player == Field.WHITE)
+        Room room = PhotonNetwork.CurrentRoom;
+        if (room != null && room.PlayerCount == 2)
         {
-            photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.BLACK);
-        } else if (pieces.player == Field.BLACK)
-        {
-            photonView.RPC("setPlayer", RpcTarget.OthersBuffered, Field.WHITE);
+            bool whiteActive = pieces.toggleWhite.activeInHierarchy;
+            bool blackActive = pieces.toggleBlack.activeInHierarchy;
+            pieces.toggleWhite.SetActive(true);
+            pieces.toggleBlack.SetActive(true);
+            pieces.toggleWhite.GetComponent<Toggle>().isOn = false;
+            pieces.toggleWhite.SetActive(whiteActive);
+            pieces.toggleBlack.SetActive(blackActive);
         }
     }
 
@@ -59,6 +63,13 @@ public class Networking : MonoBehaviourPunCallbacks
         }
         Pieces p = gameObject.GetComponent<Pieces>();
         p.receiveBoardStatus(fs);
+    }
+
+    [PunRPC]
+    public void setGameStarted()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.gameStarted = true;
     }
 
     [PunRPC]
@@ -95,6 +106,14 @@ public class Networking : MonoBehaviourPunCallbacks
         p.setBlackPieces(blackPieces);
     }
 
+    [PunRPC]
+    public void setWon()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.won = true;
+        p.gameEnded = true;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -105,7 +124,21 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
+            Pieces p = gameObject.GetComponent<Pieces>();
+            p.roomFull = false;
             PhotonNetwork.ConnectUsingSettings();
+        } else
+        {
+            Room room = PhotonNetwork.CurrentRoom;
+            if (room != null && room.PlayerCount == 2)
+            {
+                Pieces p = gameObject.GetComponent<Pieces>();
+                p.roomFull = true;
+            } else
+            {
+                Pieces p = gameObject.GetComponent<Pieces>();
+                p.roomFull = false;
+            }
         }
     }
 }

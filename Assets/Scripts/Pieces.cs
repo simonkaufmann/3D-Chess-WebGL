@@ -33,10 +33,23 @@ public class Pieces : MonoBehaviour
     public Camera cameraBlackTop;
 
     public bool active = false;
+    public bool gameEnded = false;
+    public bool gameStarted = false;
+    public bool won = false;
+    public bool roomFull = false;
 
     GameObject txtStatus;
     GameObject txtPawnPromotion;
     GameObject txtCheck;
+    GameObject txtCheckmate;
+    GameObject txtTurn;
+    GameObject txtTurnPlayerWhite;
+    GameObject txtTurnPlayerBlack;
+    GameObject txtWon;
+    GameObject txtWaitForPlayer;
+    GameObject buttonStartGame;
+    public GameObject toggleWhite;
+    public GameObject toggleBlack;
     Field fieldPawnPromotion = null;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
@@ -219,21 +232,39 @@ public class Pieces : MonoBehaviour
         txtPawnPromotion.SetActive(false);
         txtCheck = GameObject.Find("txtCheck");
         txtCheck.SetActive(false);
+        txtCheckmate = GameObject.Find("txtCheckmate");
+        txtCheckmate.SetActive(false);
+        txtTurn = GameObject.Find("txtTurn");
+        txtTurn.SetActive(false);
+        txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
+        txtTurnPlayerWhite.SetActive(false);
+        txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
+        txtTurnPlayerBlack.SetActive(false);
+        txtWon = GameObject.Find("txtWon");
+        txtWon.SetActive(false);
+        txtWaitForPlayer = GameObject.Find("txtWaitForPlayer");
+        txtWaitForPlayer.SetActive(false);
+        buttonStartGame = GameObject.Find("buttonStartGame");
+        buttonStartGame.SetActive(false);
+        toggleWhite = GameObject.Find("toggleWhite");
+        toggleWhite.SetActive(false);
+        toggleBlack = GameObject.Find("toggleBlack");
+        toggleBlack.SetActive(false);
 
-        /*foreach (Field f in fields)
+        foreach (Field f in fields)
         {
-            //f.player = Field.EMPTY;
-            f.highlight3 = true;
+            f.player = Field.EMPTY;
+            //f.highlight3 = true;
         }
         fields[4, 5].player = Field.WHITE;
-        fields[4, 5].no = 4;
+        fields[4, 5].no = 11;
         fields[5, 6].player = Field.WHITE;
-        fields[5, 6].no = 5;
+        fields[5, 6].no = 8;
         fields[6, 6].player = Field.WHITE;
-        fields[6, 6].no = 6;
+        fields[6, 6].no = 15;
         fields[7, 6].player = Field.WHITE;
         fields[7, 6].no = 7;
-        fields[0, 0].no = 12;
+        fields[0, 0].no = 11;
         fields[0, 0].player = Field.BLACK;
         fields[1, 1].no = 1;
         fields[1, 1].player = Field.BLACK;
@@ -243,7 +274,7 @@ public class Pieces : MonoBehaviour
         fields[3, 1].player = Field.BLACK;
         fields[4, 1].no = 4;
         fields[4, 1].player = Field.BLACK;
-        placePieces();*/
+        placePieces();
     }
 
     void highlightField(Field field)
@@ -260,11 +291,6 @@ public class Pieces : MonoBehaviour
 
     void highlightPiece(Piece p)
     {
-        if (p == null)
-        {
-            return;
-        }
-
         foreach (Piece pi in whitePieces)
         {
             pi.highlight1 = false;
@@ -273,6 +299,11 @@ public class Pieces : MonoBehaviour
         foreach (Piece pi in blackPieces)
         {
             pi.highlight1 = false;
+        }
+
+        if (p == null)
+        {
+            return;
         }
 
         p.highlight1 = true;
@@ -469,6 +500,14 @@ public class Pieces : MonoBehaviour
 
     void highlight2Fields(List<Field> fs)
     {
+        foreach (Field field in fields)
+        {
+            field.highlight2 = false;
+        }
+        if (fs == null)
+        {
+            return;
+        }
         foreach (Field f in fs)
         {
             f.highlight2 = true;
@@ -1172,11 +1211,6 @@ public class Pieces : MonoBehaviour
 
     void selectField(Field f)
     {
-        foreach (Field field in fields)
-        {
-            field.highlight2 = false;
-        }
-
         if (f == null)
         {
             selectedField = null;
@@ -1360,6 +1394,7 @@ public class Pieces : MonoBehaviour
             if (fields[i, 7].player == Field.WHITE && pieceIsType(getPiece(fields[i, 7]), "Pawn"))
             {
                 fieldPawnPromotion = fields[i, 7];
+                turnAllCentreTextsOff();
                 txtPawnPromotion.SetActive(true);
                 return;
 
@@ -1367,6 +1402,7 @@ public class Pieces : MonoBehaviour
             if (fields[i, 0].player == Field.BLACK && pieceIsType(getPiece(fields[i, 0]), "Pawn"))
             {
                 fieldPawnPromotion = fields[i, 0];
+                turnAllCentreTextsOff();
                 txtPawnPromotion.SetActive(true);
                 return;
             }
@@ -1443,6 +1479,8 @@ public class Pieces : MonoBehaviour
 
     void sendBoardStatus()
     {
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+
         string[] str = new string[fields.GetLength(0) * fields.GetLength(1)];
         for (int i = 0; i < fields.GetLength(0); i++)
         {
@@ -1454,7 +1492,6 @@ public class Pieces : MonoBehaviour
 
         checkKingMoved();
 
-        PhotonView photonView = gameObject.GetComponent<PhotonView>();
         photonView.RPC("sendMove", RpcTarget.AllBufferedViaServer, str);
         photonView.RPC("setWhitePieces", RpcTarget.AllBufferedViaServer, typesWhitePieces);
         photonView.RPC("setBlackPieces", RpcTarget.AllBufferedViaServer, typesBlackPieces);
@@ -1535,6 +1572,44 @@ public class Pieces : MonoBehaviour
         }
     }
 
+    void checkCheck()
+    {
+        List<Field> allMoves = new List<Field>();
+        Piece[] ownPieces;
+        if (player == Field.WHITE)
+        {
+            ownPieces = whitePieces;
+        } else
+        {
+            ownPieces = blackPieces;
+        }
+        foreach (Piece p in ownPieces)
+        {
+            Field f = getFieldOfPiece(p);
+            if (f != null)
+            {
+                allMoves.AddRange(getMoves(fields, f));
+            }
+        }
+
+        if (allMoves.Count == 0)
+        {
+            turnAllCentreTextsOff();
+            txtCheckmate.SetActive(true);
+            PhotonView photonView = gameObject.GetComponent<PhotonView>();
+            photonView.RPC("setWon", RpcTarget.OthersBuffered);
+            gameEnded = true;
+        }
+        else
+        {
+            if (isCheck(fields, player))
+            {
+                turnAllCentreTextsOff();
+                txtCheck.SetActive(true);
+            }
+        }
+    }
+
     public void receiveBoardStatus(Field[] fs)
     {
 
@@ -1578,10 +1653,13 @@ public class Pieces : MonoBehaviour
 
         if (isCheck(fields))
         {
+            turnAllCentreTextsOff();
             txtCheck.SetActive(true);
         }
 
         placePieces();
+
+        checkCheck();
     }
 
     void checkCastling(Field f)
@@ -1658,10 +1736,20 @@ public class Pieces : MonoBehaviour
             if (turn == player)
             {
                 img.color = Color.black;
+                if (gameStarted)
+                {
+                    txtTurnPlayerBlack.SetActive(true);
+                }
+                txtTurnPlayerWhite.SetActive(false);
             }
             else
             {
                 img.color = Color.white;
+                txtTurnPlayerBlack.SetActive(false);
+                if (gameStarted)
+                {
+                    txtTurnPlayerWhite.SetActive(true);
+                }
             }
         }
     }
@@ -1817,6 +1905,58 @@ public class Pieces : MonoBehaviour
         oldPlayer = player;
     }
 
+    bool checkGameStarted()
+    {
+        if (gameStarted)
+        {
+            toggleWhite.gameObject.SetActive(false);
+            toggleBlack.gameObject.SetActive(false);
+            txtTurn.SetActive(true);
+            if (turn == Field.WHITE)
+            {
+                txtTurnPlayerWhite.SetActive(true);
+                txtTurnPlayerBlack.SetActive(false);
+            } else
+            {
+                txtTurnPlayerBlack.SetActive(true);
+                txtTurnPlayerWhite.SetActive(false);
+            }
+            buttonStartGame.SetActive(false);
+            return true;
+        } else
+        {
+            toggleWhite.gameObject.SetActive(true);
+            toggleBlack.gameObject.SetActive(true);
+            txtTurn.SetActive(false);
+            txtTurnPlayerWhite.SetActive(false);
+            txtTurnPlayerBlack.SetActive(false);
+            buttonStartGame.SetActive(true);
+            return false;
+        }
+    }
+
+    void checkWon()
+    {
+        if (won)
+        {
+            turnAllCentreTextsOff();
+            txtWon.SetActive(true);
+        }
+        else
+        {
+            txtWon.SetActive(false);
+        }
+    }
+
+    void turnAllCentreTextsOff()
+    {
+        txtStatus.SetActive(false);
+        txtCheck.SetActive(false);
+        txtCheckmate.SetActive(false);
+        txtPawnPromotion.SetActive(false);
+        txtWaitForPlayer.SetActive(false);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -1824,6 +1964,7 @@ public class Pieces : MonoBehaviour
 
         if (!active)
         {
+            turnAllCentreTextsOff();
             txtStatus.SetActive(true);
             return;
         }
@@ -1832,9 +1973,36 @@ public class Pieces : MonoBehaviour
             txtStatus.SetActive(false);
         }
 
-        checkCameraTop();
+        if (!roomFull)
+        {
+            turnAllCentreTextsOff();
+            txtWaitForPlayer.SetActive(true);
+            return;
+        } else
+        {
+            txtWaitForPlayer.SetActive(false);
+        }
 
         checkPlayer();
+
+        if (!checkGameStarted())
+        {
+            return;
+        }
+
+        checkCameraTop();
+
+        checkWon();
+
+        if (gameEnded)
+        {
+            highlight4Field(null);
+            highlightField(null);
+            highlightPiece((Field) null);
+            highlight4Piece(null);
+            highlight2Fields(null);
+            return;
+        }
 
         // Delete green highlighting from received fields after every click
         if (Input.GetMouseButtonDown(0))

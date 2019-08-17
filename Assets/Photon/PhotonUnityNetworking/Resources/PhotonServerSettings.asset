@@ -40,5 +40,7 @@ MonoBehaviour:
   - setEnPassant
   - setBlackPieces
   - setWhitePieces
+  - setWon
+  - setGameStarted
   DisableAutoOpenWizard: 1
   ShowSettings: 0

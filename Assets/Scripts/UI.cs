@@ -6,6 +6,14 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
+    public void startGame()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.gameStarted = true;
+
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        photonView.RPC("setGameStarted", RpcTarget.OthersBuffered);
+    }
 
     public void toggleWhiteValueChanged()
     {
