@@ -39,19 +39,19 @@ public class Pieces : MonoBehaviour
     public bool draw = false;
     public bool roomFull = false;
 
-    GameObject txtStatus;
-    GameObject txtPawnPromotion;
-    GameObject txtCheck;
-    GameObject txtCheckmate;
+    GameObject panelLoad;
+    GameObject panelPawnPromotion;
+    GameObject panelCheck;
+    GameObject panelCheckmate;
     GameObject txtTurn;
     GameObject txtTurnPlayerWhite;
     GameObject txtTurnPlayerBlack;
-    GameObject txtWon;
-    GameObject txtWaitForPlayer;
+    GameObject panelWon;
+    GameObject panelWaitForPlayer;
     GameObject buttonStartGame;
     public GameObject toggleWhite;
     public GameObject toggleBlack;
-    GameObject txtDraw;
+    GameObject panelDraw;
     Field fieldPawnPromotion = null;
     GameObject panelChooseColour;
     GameObject panelTurn;
@@ -231,25 +231,25 @@ public class Pieces : MonoBehaviour
 
         initialisePieces(whitePieces, blackPieces);
 
-        txtStatus = GameObject.Find("txtStatus");
-        txtPawnPromotion = GameObject.Find("txtPawnPromotion");
-        txtPawnPromotion.SetActive(false);
-        txtCheck = GameObject.Find("txtCheck");
-        txtCheck.SetActive(false);
-        txtCheckmate = GameObject.Find("txtCheckmate");
-        txtCheckmate.SetActive(false);
+        panelLoad = GameObject.Find("panelLoad");
+        panelPawnPromotion = GameObject.Find("panelPawnPromotion");
+        panelPawnPromotion.SetActive(false);
+        panelCheck = GameObject.Find("panelCheck");
+        panelCheck.SetActive(false);
+        panelCheckmate = GameObject.Find("panelCheckmate");
+        panelCheckmate.SetActive(false);
         txtTurn = GameObject.Find("txtTurn");
         txtTurnPlayerWhite = GameObject.Find("txtTurnPlayerWhite");
         txtTurnPlayerBlack = GameObject.Find("txtTurnPlayerBlack");
-        txtWon = GameObject.Find("txtWon");
-        txtWon.SetActive(false);
-        txtWaitForPlayer = GameObject.Find("txtWaitForPlayer");
-        txtWaitForPlayer.SetActive(false);
+        panelWon = GameObject.Find("panelWon");
+        panelWon.SetActive(false);
+        panelWaitForPlayer = GameObject.Find("panelWaitForPlayer");
+        panelWaitForPlayer.SetActive(false);
         buttonStartGame = GameObject.Find("buttonStartGame");
         toggleWhite = GameObject.Find("toggleWhite");
         toggleBlack = GameObject.Find("toggleBlack");
-        txtDraw = GameObject.Find("txtDraw");
-        txtDraw.SetActive(false);
+        panelDraw = GameObject.Find("panelDraw");
+        panelDraw.SetActive(false);
         panelTurn = GameObject.Find("panelTurn");
         panelTurn.SetActive(false);
         panelChooseColour = GameObject.Find("panelChooseColour");
@@ -1404,7 +1404,7 @@ public class Pieces : MonoBehaviour
         }
 
         fieldPawnPromotion = null;
-        txtPawnPromotion.SetActive(false);
+        panelPawnPromotion.SetActive(false);
         placePieces();
         return true;
     }
@@ -1422,7 +1422,7 @@ public class Pieces : MonoBehaviour
             {
                 fieldPawnPromotion = fields[i, 7];
                 turnAllCentreTextsOff();
-                txtPawnPromotion.SetActive(true);
+                panelPawnPromotion.SetActive(true);
                 return;
 
             }
@@ -1430,7 +1430,7 @@ public class Pieces : MonoBehaviour
             {
                 fieldPawnPromotion = fields[i, 0];
                 turnAllCentreTextsOff();
-                txtPawnPromotion.SetActive(true);
+                panelPawnPromotion.SetActive(true);
                 return;
             }
         }
@@ -1624,7 +1624,7 @@ public class Pieces : MonoBehaviour
             if (isCheck(fields, player))
             {
                 turnAllCentreTextsOff();
-                txtCheckmate.SetActive(true);
+                panelCheckmate.SetActive(true);
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
                 photonView.RPC("setWon", RpcTarget.OthersBuffered);
                 gameEnded = true;
@@ -1632,7 +1632,7 @@ public class Pieces : MonoBehaviour
             else
             {
                 turnAllCentreTextsOff();
-                txtDraw.SetActive(true);
+                panelDraw.SetActive(true);
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
                 photonView.RPC("setDraw", RpcTarget.OthersBuffered);
                 gameEnded = true;
@@ -1644,7 +1644,7 @@ public class Pieces : MonoBehaviour
             if (isCheck(fields, player))
             {
                 turnAllCentreTextsOff();
-                txtCheck.SetActive(true);
+                panelCheck.SetActive(true);
             }
         }
     }
@@ -1693,7 +1693,7 @@ public class Pieces : MonoBehaviour
         if (isCheck(fields))
         {
             turnAllCentreTextsOff();
-            txtCheck.SetActive(true);
+            panelCheck.SetActive(true);
         }
 
         placePieces();
@@ -1954,29 +1954,29 @@ public class Pieces : MonoBehaviour
         if (won)
         {
             turnAllCentreTextsOff();
-            txtWon.SetActive(true);
+            panelWon.SetActive(true);
         }
         else if (draw)
         {
             turnAllCentreTextsOff();
-            txtDraw.SetActive(true);
+            panelDraw.SetActive(true);
         }
         else
         {
-            txtWon.SetActive(false);
-            txtDraw.SetActive(false);
+            panelWon.SetActive(false);
+            panelDraw.SetActive(false);
         }
     }
 
     void turnAllCentreTextsOff()
     {
-        txtStatus.SetActive(false);
-        txtCheck.SetActive(false);
-        txtCheckmate.SetActive(false);
-        txtPawnPromotion.SetActive(false);
-        txtWaitForPlayer.SetActive(false);
-        txtWon.SetActive(false);
-        txtDraw.SetActive(false);
+        panelLoad.SetActive(false);
+        panelCheck.SetActive(false);
+        panelCheckmate.SetActive(false);
+        panelPawnPromotion.SetActive(false);
+        panelWaitForPlayer.SetActive(false);
+        panelWon.SetActive(false);
+        panelDraw.SetActive(false);
     }
 
     // Update is called once per frame
@@ -1987,22 +1987,22 @@ public class Pieces : MonoBehaviour
         if (!active)
         {
             turnAllCentreTextsOff();
-            txtStatus.SetActive(true);
+            panelLoad.SetActive(true);
             return;
         }
         else
         {
-            txtStatus.SetActive(false);
+            panelLoad.SetActive(false);
         }
 
         if (!roomFull)
         {
             turnAllCentreTextsOff();
-            txtWaitForPlayer.SetActive(true);
+            panelWaitForPlayer.SetActive(true);
             return;
         } else
         {
-            txtWaitForPlayer.SetActive(false);
+            panelWaitForPlayer.SetActive(false);
         }
 
         checkPlayer();
@@ -2032,7 +2032,7 @@ public class Pieces : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             deleteHighlight3();
-            txtCheck.SetActive(false);
+            panelCheck.SetActive(false);
         }
 
         // None selected -> highlight field under cursor and if clicked select that field

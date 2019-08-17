@@ -103,6 +103,7 @@ public class UI : MonoBehaviour
         panelRestart = GameObject.Find("panelRestart");
         panelRestart.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");
+        panelRoomSelection.SetActive(false);
     }
 
     // Update is called once per frame
