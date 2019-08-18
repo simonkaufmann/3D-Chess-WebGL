@@ -17,6 +17,8 @@ http://forum.orkframework.com/discussion/1214/solved-my-whole-project-is-corrupt
 https://medium.com/@johntucker_48673/unity-exploring-multiplayer-solutions-20000ccab3b6  
 https://thoughtbot.com/blog/how-to-git-with-unity  
 https://www.turbosquid.com/FullPreview/Index.cfm/ID/1408325  
+https://github.com/dantasulisses/WebMobileInputFix  
+https://forum.unity.com/threads/keyboard-input-webgl-mobile.505193/  
 
 ## Notes
 
