@@ -57,6 +57,7 @@ public class UI : MonoBehaviour
         photonView.RPC("setWon", RpcTarget.OthersBuffered, Networking.GIVENUP);
 
         Pieces p = gameObject.GetComponent<Pieces>();
+        p.giveUpDialog = false;
         p.gameEnded = true;
     }
 

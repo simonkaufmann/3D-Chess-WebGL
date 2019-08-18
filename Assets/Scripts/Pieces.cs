@@ -43,6 +43,7 @@ public class Pieces : MonoBehaviour
     public bool draw = false;
     public bool roomFull = false;
 
+    public GameObject buttonGiveUp;
     public GameObject txtInputRoom;
     public GameObject txtRoomError;
     public GameObject txtInputPlayerName;
@@ -245,6 +246,7 @@ public class Pieces : MonoBehaviour
 
         initialisePieces(whitePieces, blackPieces);
 
+        buttonGiveUp = GameObject.Find("buttonGiveUp");
         txtInputRoom = GameObject.Find("txtInputRoom");
         txtRoomError = GameObject.Find("txtRoomError");
         txtInputPlayerName = GameObject.Find("txtInputPlayerName");
@@ -1653,16 +1655,12 @@ public class Pieces : MonoBehaviour
         {
             if (isCheck(fields, player))
             {
-                turnAllCentreTextsOff();
-                panelCheckmate.SetActive(true);
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
                 photonView.RPC("setWon", RpcTarget.OthersBuffered, Networking.CHECKMATE);
                 gameEnded = true;
             }
             else
             {
-                turnAllCentreTextsOff();
-                panelDraw.SetActive(true);
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
                 photonView.RPC("setDraw", RpcTarget.OthersBuffered);
                 gameEnded = true;
@@ -1995,20 +1993,27 @@ public class Pieces : MonoBehaviour
 
     void checkWon()
     {
-        if (wonCheckmate)
+        if (gameEnded)
         {
-            turnAllCentreTextsOff();
-            panelWonCheckmate.SetActive(true);
-        }
-        else if (wonGivenUp)
-        {
-            turnAllCentreTextsOff();
-            panelWonGivenUp.SetActive(true);
-        }
-        else if (draw)
-        {
-            turnAllCentreTextsOff();
-            panelDraw.SetActive(true);
+            if (wonCheckmate)
+            {
+                turnAllCentreTextsOff();
+                panelWonCheckmate.SetActive(true);
+            }
+            else if (wonGivenUp)
+            {
+                turnAllCentreTextsOff();
+                panelWonGivenUp.SetActive(true);
+            }
+            else if (draw)
+            {
+                turnAllCentreTextsOff();
+                panelDraw.SetActive(true);
+            }
+            else
+            {
+                panelCheckmate.SetActive(true);
+            }
         }
         else
         {
@@ -2087,11 +2092,13 @@ public class Pieces : MonoBehaviour
         if (!roomFull)
         {
             turnAllCentreTextsOff();
+            buttonGiveUp.SetActive(false);
             panelWaitForPlayer.SetActive(true);
             return;
         }
         else
         {
+            buttonGiveUp.SetActive(true);
             panelWaitForPlayer.SetActive(false);
         }
 
