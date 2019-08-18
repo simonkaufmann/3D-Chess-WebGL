@@ -32,6 +32,7 @@ public class Pieces : MonoBehaviour
     public Camera cameraWhiteTop;
     public Camera cameraBlackTop;
 
+    public bool restartDialog = false;
     public bool connected = false;
     public bool roomJoined = false;
     public bool gameEnded = false;
@@ -40,6 +41,9 @@ public class Pieces : MonoBehaviour
     public bool draw = false;
     public bool roomFull = false;
 
+    public GameObject txtInputRoom;
+    public GameObject txtRoomError;
+    public GameObject txtInputPlayerName;
     public GameObject txtWaitForPlayerRoomName;
     public GameObject txtPlayerWhite;
     public GameObject txtPlayerBlack;
@@ -59,6 +63,8 @@ public class Pieces : MonoBehaviour
     Field fieldPawnPromotion = null;
     public GameObject panelChooseColour;
     GameObject panelTurn;
+    public GameObject panelRestart;
+    public GameObject panelRoomSelection;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
 
@@ -235,6 +241,9 @@ public class Pieces : MonoBehaviour
 
         initialisePieces(whitePieces, blackPieces);
 
+        txtInputRoom = GameObject.Find("txtInputRoom");
+        txtRoomError = GameObject.Find("txtRoomError");
+        txtInputPlayerName = GameObject.Find("txtInputPlayerName");
         txtWaitForPlayerRoomName = GameObject.Find("txtWaitForPlayerRoomName");
         txtPlayerWhite = GameObject.Find("txtPlayerWhite");
         txtPlayerBlack = GameObject.Find("txtPlayerBlack");
@@ -263,6 +272,10 @@ public class Pieces : MonoBehaviour
         panelTurn.SetActive(false);
         panelChooseColour = GameObject.Find("panelChooseColour");
         panelChooseColour.SetActive(false);
+        panelRestart = GameObject.Find("panelRestart");
+        panelRestart.SetActive(false);
+        panelRoomSelection = GameObject.Find("panelRoomSelection");
+        panelRoomSelection.SetActive(false);
 
         /*foreach (Field f in fields)
         {
@@ -2001,9 +2014,7 @@ public class Pieces : MonoBehaviour
         panelWaitForPlayer.SetActive(false);
         panelWon.SetActive(false);
         panelDraw.SetActive(false);
-        UI ui = gameObject.GetComponent<UI>();
-        ui.hideRestartDialog();
-        ui.hideRoomSelection();
+        panelRestart.SetActive(false);
     }
 
     // Update is called once per frame
@@ -2026,10 +2037,26 @@ public class Pieces : MonoBehaviour
         if (!roomJoined)
         {
             panelTurn.SetActive(false);
+            turnAllCentreTextsOff();
+            panelRoomSelection.SetActive(true);
             return;
+        } else
+        {
+            panelRoomSelection.SetActive(false);
         }
 
         panelTurn.SetActive(true);
+
+        if (restartDialog)
+        {
+            turnAllCentreTextsOff();
+            panelRestart.SetActive(true);
+            return;
+        } else
+        {
+            panelRestart.SetActive(false);
+        }
+
 
         if (!roomFull)
         {
@@ -2119,7 +2146,7 @@ public class Pieces : MonoBehaviour
         {
             if (turn == player)
             {
-                Field f = getFieldByField();
+                Field f = getFieldByPiece();
                 highlight4Field(f);
                 highlight4Piece(f);
 

@@ -8,11 +8,6 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
-    public GameObject panelRestart;
-    public GameObject panelRoomSelection;
-    public GameObject txtInputRoom;
-    public GameObject txtRoomError;
-    public GameObject txtInputPlayerName;
 
     public string username;
     public string otherUsername;
@@ -43,43 +38,33 @@ public class UI : MonoBehaviour
 
     public void roomJoinError(string message)
     {
-        txtRoomError.GetComponent<Text>().text =  "Fehler: " + message;
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.txtRoomError.GetComponent<Text>().text =  "Fehler: " + message;
     }
 
     public void joinRoom()
     {
+        Pieces p = gameObject.GetComponent<Pieces>();
         PhotonView photonView = gameObject.GetComponent<PhotonView>();
-        PhotonNetwork.LocalPlayer.NickName = txtInputPlayerName.GetComponent<Text>().text;
+        PhotonNetwork.LocalPlayer.NickName = p.txtInputPlayerName.GetComponent<Text>().text;
 
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 2;
-        string roomName = txtInputRoom.GetComponent<Text>().text;
+        string roomName = p.txtInputRoom.GetComponent<Text>().text;
         PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
-    }
-
-    public void showRoomSelection()
-    {
-        Pieces p = gameObject.GetComponent<Pieces>();
-        p.turnAllCentreTextsOff();
-        panelRoomSelection.SetActive(true);
-    }
-
-    public void hideRoomSelection()
-    {
-        panelRoomSelection.SetActive(false);
     }
 
     public void showRestartDialog()
     {
         Pieces p = gameObject.GetComponent<Pieces>();
-        p.turnAllCentreTextsOff();
-        panelRestart.SetActive(true);
+        p.restartDialog = true;
     }
 
     public void hideRestartDialog()
     {
-        panelRestart.SetActive(false);
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.restartDialog = false;
     }
 
     public void restartWithoutRPC()
@@ -133,13 +118,6 @@ public class UI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        txtInputRoom = GameObject.Find("txtInputRoom");
-        txtRoomError = GameObject.Find("txtRoomError");
-        txtInputPlayerName = GameObject.Find("txtInputPlayerName");
-        panelRestart = GameObject.Find("panelRestart");
-        panelRestart.SetActive(false);
-        panelRoomSelection = GameObject.Find("panelRoomSelection");
-        panelRoomSelection.SetActive(false);
     }
 
     // Update is called once per frame

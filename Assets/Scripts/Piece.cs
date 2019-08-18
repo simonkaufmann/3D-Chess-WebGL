@@ -77,7 +77,7 @@ public class Piece
         {
             rend.material.color = Field.AMBER_NONTRANSPARENT;
         }
-        else if (_highlight1)
+        else if (_highlight1 || _highlight2)
         {
             rend.material.color = Color.red;
         }

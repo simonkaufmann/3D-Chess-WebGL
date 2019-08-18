@@ -12,7 +12,6 @@ public class Networking : MonoBehaviourPunCallbacks
     {
         Debug.Log("Connected to master");
         UI ui = gameObject.GetComponent<UI>();
-        ui.showRoomSelection();
 
         Pieces p = gameObject.GetComponent<Pieces>();
         p.connected = true;
@@ -36,7 +35,6 @@ public class Networking : MonoBehaviourPunCallbacks
         p.roomJoined = true;
 
         UI ui = gameObject.GetComponent<UI>();
-        ui.hideRoomSelection();
 
         // If other player already in game, then choose colour black for own player
         PhotonView photonView = gameObject.GetComponent<PhotonView>();

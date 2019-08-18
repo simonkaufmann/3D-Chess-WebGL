@@ -19,8 +19,8 @@ public class Field
     public static int WHITE = 1;
     public static int BLACK = 2;
 
-    public static Color AMBER = new Color(255.0f / 255.0f, 239.0f / 255.0f, 0, 150.0f/255.0f);
-    public static Color AMBER_NONTRANSPARENT = new Color(255.0f / 255.0f, 239.0f / 255.0f, 0);
+    public static Color AMBER = new Color(255.0f / 255.0f, 50.0f / 255.0f, 0, 150.0f/255.0f);
+    public static Color AMBER_NONTRANSPARENT = new Color(255.0f / 255.0f, 50.0f / 255.0f, 0);
     public static Color GREEN = new Color(0 / 255.0f, 200.0f / 255.0f, 0, 150.0f / 255.0f);
     public static Color RED = new Color(255.0f / 255.0f, 0 / 255.0f, 0, 150.0f / 255.0f);
 
