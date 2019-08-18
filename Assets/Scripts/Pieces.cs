@@ -40,6 +40,7 @@ public class Pieces : MonoBehaviour
     public bool gameStarted = false;
     public bool wonCheckmate = false;
     public bool wonGivenUp = false;
+    public bool checkmate = false;
     public bool draw = false;
     public bool roomFull = false;
 
@@ -67,6 +68,7 @@ public class Pieces : MonoBehaviour
     Field fieldPawnPromotion = null;
     public GameObject panelChooseColour;
     GameObject panelTurn;
+    GameObject panelLostGivenUp;
     public GameObject panelRestart;
     public GameObject panelGiveUp;
     public GameObject panelRoomSelection;
@@ -286,6 +288,8 @@ public class Pieces : MonoBehaviour
         panelGiveUp.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");
         panelRoomSelection.SetActive(false);
+        panelLostGivenUp = GameObject.Find("panelLostGivenUp");
+        panelLostGivenUp.SetActive(false);
 
         /*foreach (Field f in fields)
         {
@@ -1658,6 +1662,7 @@ public class Pieces : MonoBehaviour
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
                 photonView.RPC("setWon", RpcTarget.OthersBuffered, Networking.CHECKMATE);
                 gameEnded = true;
+                checkmate = true;
             }
             else
             {
@@ -1951,6 +1956,7 @@ public class Pieces : MonoBehaviour
         if (gameStarted)
         {
             panelChooseColour.SetActive(false);
+            buttonGiveUp.SetActive(true);
 
             if (turn == Field.WHITE)
             {
@@ -1971,6 +1977,7 @@ public class Pieces : MonoBehaviour
         {
             turnAllCentreTextsOff();
             panelChooseColour.SetActive(true);
+            buttonGiveUp.SetActive(false);
             return false;
         }
     }
@@ -1991,7 +1998,7 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    void checkWon()
+    void checkEnded()
     {
         if (gameEnded)
         {
@@ -2009,10 +2016,14 @@ public class Pieces : MonoBehaviour
             {
                 turnAllCentreTextsOff();
                 panelDraw.SetActive(true);
+            } else if (checkmate)
+            {
+                turnAllCentreTextsOff();
+                panelCheckmate.SetActive(true);
             }
             else
             {
-                panelCheckmate.SetActive(true);
+                panelLostGivenUp.SetActive(true);
             }
         }
         else
@@ -2020,6 +2031,7 @@ public class Pieces : MonoBehaviour
             panelWonCheckmate.SetActive(false);
             panelWonGivenUp.SetActive(false);
             panelDraw.SetActive(false);
+            panelLostGivenUp.SetActive(false);
         }
     }
 
@@ -2092,13 +2104,11 @@ public class Pieces : MonoBehaviour
         if (!roomFull)
         {
             turnAllCentreTextsOff();
-            buttonGiveUp.SetActive(false);
             panelWaitForPlayer.SetActive(true);
             return;
         }
         else
         {
-            buttonGiveUp.SetActive(true);
             panelWaitForPlayer.SetActive(false);
         }
 
@@ -2111,7 +2121,7 @@ public class Pieces : MonoBehaviour
 
         checkCameraTop();
 
-        checkWon();
+        checkEnded();
 
         if (gameEnded)
         {
