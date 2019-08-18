@@ -12,6 +12,14 @@ public class UI : MonoBehaviour
     public string username;
     public string otherUsername;
 
+
+    public void giveUp()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        turnOffAllDialogs();
+        p.giveUpDialog = true;
+    }
+
     public void startGame()
     {
         Pieces p = gameObject.GetComponent<Pieces>();
@@ -36,6 +44,28 @@ public class UI : MonoBehaviour
         hideRestartDialog();
     }
 
+    public void turnOffAllDialogs()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.giveUpDialog = false;
+        p.restartDialog = false;
+    }
+
+    public void giveUpYes()
+    {
+        PhotonView photonView = gameObject.GetComponent<PhotonView>();
+        photonView.RPC("setWon", RpcTarget.OthersBuffered, Networking.GIVENUP);
+
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.gameEnded = true;
+    }
+
+    public void giveUpNo()
+    {
+        Pieces p = gameObject.GetComponent<Pieces>();
+        p.giveUpDialog = false;
+    }
+
     public void roomJoinError(string message)
     {
         Pieces p = gameObject.GetComponent<Pieces>();
@@ -58,6 +88,7 @@ public class UI : MonoBehaviour
     public void showRestartDialog()
     {
         Pieces p = gameObject.GetComponent<Pieces>();
+        turnOffAllDialogs();
         p.restartDialog = true;
     }
 

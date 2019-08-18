@@ -32,12 +32,14 @@ public class Pieces : MonoBehaviour
     public Camera cameraWhiteTop;
     public Camera cameraBlackTop;
 
+    public bool giveUpDialog = false;
     public bool restartDialog = false;
     public bool connected = false;
     public bool roomJoined = false;
     public bool gameEnded = false;
     public bool gameStarted = false;
-    public bool won = false;
+    public bool wonCheckmate = false;
+    public bool wonGivenUp = false;
     public bool draw = false;
     public bool roomFull = false;
 
@@ -55,7 +57,8 @@ public class Pieces : MonoBehaviour
     public GameObject txtTurnPlayerBlack;
     GameObject panelTurnPlayerWhite;
     GameObject panelTurnPlayerBlack;
-    GameObject panelWon;
+    GameObject panelWonCheckmate;
+    GameObject panelWonGivenUp;
     GameObject panelWaitForPlayer;
     public GameObject toggleWhite;
     public GameObject toggleBlack;
@@ -64,6 +67,7 @@ public class Pieces : MonoBehaviour
     public GameObject panelChooseColour;
     GameObject panelTurn;
     public GameObject panelRestart;
+    public GameObject panelGiveUp;
     public GameObject panelRoomSelection;
 
     Vector2 POSITION_OFF_SCREEN = new Vector2(-10000, -10000);
@@ -260,8 +264,10 @@ public class Pieces : MonoBehaviour
         panelTurnPlayerWhite = GameObject.Find("panelTurnPlayerWhite");
         panelTurnPlayerBlack = GameObject.Find("panelTurnPlayerBlack");
         panelTurnPlayerBlack.SetActive(false);
-        panelWon = GameObject.Find("panelWon");
-        panelWon.SetActive(false);
+        panelWonCheckmate = GameObject.Find("panelWonCheckmate");
+        panelWonCheckmate.SetActive(false);
+        panelWonGivenUp = GameObject.Find("panelWonGivenUp");
+        panelWonGivenUp.SetActive(false);
         panelWaitForPlayer = GameObject.Find("panelWaitForPlayer");
         panelWaitForPlayer.SetActive(false);
         toggleWhite = GameObject.Find("toggleWhite");
@@ -274,6 +280,8 @@ public class Pieces : MonoBehaviour
         panelChooseColour.SetActive(false);
         panelRestart = GameObject.Find("panelRestart");
         panelRestart.SetActive(false);
+        panelGiveUp = GameObject.Find("panelGiveUp");
+        panelGiveUp.SetActive(false);
         panelRoomSelection = GameObject.Find("panelRoomSelection");
         panelRoomSelection.SetActive(false);
 
@@ -1648,7 +1656,7 @@ public class Pieces : MonoBehaviour
                 turnAllCentreTextsOff();
                 panelCheckmate.SetActive(true);
                 PhotonView photonView = gameObject.GetComponent<PhotonView>();
-                photonView.RPC("setWon", RpcTarget.OthersBuffered);
+                photonView.RPC("setWon", RpcTarget.OthersBuffered, Networking.CHECKMATE);
                 gameEnded = true;
             }
             else
@@ -1987,10 +1995,15 @@ public class Pieces : MonoBehaviour
 
     void checkWon()
     {
-        if (won)
+        if (wonCheckmate)
         {
             turnAllCentreTextsOff();
-            panelWon.SetActive(true);
+            panelWonCheckmate.SetActive(true);
+        }
+        else if (wonGivenUp)
+        {
+            turnAllCentreTextsOff();
+            panelWonGivenUp.SetActive(true);
         }
         else if (draw)
         {
@@ -1999,7 +2012,8 @@ public class Pieces : MonoBehaviour
         }
         else
         {
-            panelWon.SetActive(false);
+            panelWonCheckmate.SetActive(false);
+            panelWonGivenUp.SetActive(false);
             panelDraw.SetActive(false);
         }
     }
@@ -2012,9 +2026,11 @@ public class Pieces : MonoBehaviour
         panelCheckmate.SetActive(false);
         panelPawnPromotion.SetActive(false);
         panelWaitForPlayer.SetActive(false);
-        panelWon.SetActive(false);
+        panelWonCheckmate.SetActive(false);
+        panelWonGivenUp.SetActive(false);
         panelDraw.SetActive(false);
         panelRestart.SetActive(false);
+        panelGiveUp.SetActive(false);
     }
 
     // Update is called once per frame
@@ -2057,6 +2073,16 @@ public class Pieces : MonoBehaviour
             panelRestart.SetActive(false);
         }
 
+        if (giveUpDialog)
+        {
+            turnAllCentreTextsOff();
+            panelGiveUp.SetActive(true);
+            return;
+        }
+        else
+        {
+            panelGiveUp.SetActive(false);
+        }
 
         if (!roomFull)
         {

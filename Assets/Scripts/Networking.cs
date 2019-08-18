@@ -8,6 +8,9 @@ using UnityEngine.UI;
 public class Networking : MonoBehaviourPunCallbacks
 {
 
+    public static int CHECKMATE = 0;
+    public static int GIVENUP = 1;
+
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to master");
@@ -116,10 +119,16 @@ public class Networking : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void setWon()
+    public void setWon(int code)
     {
         Pieces p = gameObject.GetComponent<Pieces>();
-        p.won = true;
+        if (code == GIVENUP)
+        {
+            p.wonGivenUp = true;
+        } else if (code == CHECKMATE)
+        {
+            p.wonCheckmate = true;
+        }
         p.gameEnded = true;
     }
 
