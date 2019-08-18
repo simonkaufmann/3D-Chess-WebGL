@@ -5224,6 +5224,7 @@ MonoBehaviour:
   cameraBlack: {fileID: 1931755440}
   cameraWhiteTop: {fileID: 839242265}
   cameraBlackTop: {fileID: 1981934712}
+  restartDialog: 0
   connected: 0
   roomJoined: 0
   gameEnded: 0
@@ -5231,6 +5232,9 @@ MonoBehaviour:
   won: 0
   draw: 0
   roomFull: 0
+  txtInputRoom: {fileID: 0}
+  txtRoomError: {fileID: 0}
+  txtInputPlayerName: {fileID: 0}
   txtWaitForPlayerRoomName: {fileID: 0}
   txtPlayerWhite: {fileID: 0}
   txtPlayerBlack: {fileID: 0}
@@ -5239,6 +5243,8 @@ MonoBehaviour:
   toggleWhite: {fileID: 0}
   toggleBlack: {fileID: 0}
   panelChooseColour: {fileID: 0}
+  panelRestart: {fileID: 0}
+  panelRoomSelection: {fileID: 0}
   typesWhitePieces:
   - Pawn
   - Pawn
@@ -5309,11 +5315,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0975e363b10eca489353b82a86a27d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelRestart: {fileID: 0}
-  panelRoomSelection: {fileID: 0}
-  txtInputRoom: {fileID: 0}
-  txtRoomError: {fileID: 0}
-  txtInputPlayerName: {fileID: 0}
   username: 
   otherUsername: 
 --- !u!1 &1109728050
@@ -6832,7 +6833,7 @@ Transform:
   m_GameObject: {fileID: 1514134934}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 42.2509, y: -0.9, z: 0.0547}
-  m_LocalScale: {x: 12.349633, y: 1, z: 12.336607}
+  m_LocalScale: {x: 12.4, y: 1, z: 12.4}
   m_Children: []
   m_Father: {fileID: 1099114516}
   m_RootOrder: 9
