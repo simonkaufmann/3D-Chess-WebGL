@@ -12,6 +12,17 @@ public class UI : MonoBehaviour
     public string username;
     public string otherUsername;
 
+    public void setGerman()
+    {
+        Language p = gameObject.GetComponent<Language>();
+        p.language = Language.GERMAN;
+    }
+
+    public void setEnglish()
+    {
+        Language p = gameObject.GetComponent<Language>();
+        p.language = Language.ENGLISH;
+    }
 
     public void giveUp()
     {
@@ -70,7 +81,14 @@ public class UI : MonoBehaviour
     public void roomJoinError(string message)
     {
         Pieces p = gameObject.GetComponent<Pieces>();
-        p.txtRoomError.GetComponent<Text>().text =  "Fehler: " + message;
+        Language lang = gameObject.GetComponent<Language>();
+        if (lang.language == Language.GERMAN)
+        {
+            p.txtRoomError.GetComponent<Text>().text = "Fehler: " + message;
+        } else
+        {
+            p.txtRoomError.GetComponent<Text>().text = "Error: " + message;
+        }
     }
 
     public void joinRoom()
