@@ -2190,7 +2190,7 @@ public class Pieces : MonoBehaviour
         {
             if (turn == player)
             {
-                Field f = getFieldByPiece();
+                Field f = getFieldByField();
                 highlight4Field(f);
                 highlight4Piece(f);
 

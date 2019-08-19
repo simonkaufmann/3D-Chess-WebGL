@@ -61,8 +61,7 @@ public class Language : MonoBehaviour
     GameObject txtWonGivenUpEnglish;
     GameObject txtLostGivenUpGerman;
     GameObject txtLostGivenUpEnglish;
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         txtTurnGerman = GameObject.Find("txtTurnGerman");
         txtTurnGerman = GameObject.Find("txtTurnGerman");
