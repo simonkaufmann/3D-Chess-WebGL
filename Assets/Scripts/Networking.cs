@@ -82,10 +82,8 @@ public class Networking : MonoBehaviourPunCallbacks
     public void setPlayer(int player)
     {
         Pieces pieces = gameObject.GetComponent<Pieces>();
-        bool whiteActive = pieces.toggleWhite.activeInHierarchy;
-        bool blackActive = pieces.toggleBlack.activeInHierarchy;
-        pieces.toggleWhite.SetActive(true);
-        pieces.toggleBlack.SetActive(true);
+
+        pieces.panelChooseColour.SetActive(true);
         if (player == Field.WHITE)
         {
             pieces.toggleWhite.GetComponent<Toggle>().isOn = true;
@@ -93,8 +91,7 @@ public class Networking : MonoBehaviourPunCallbacks
         {
             pieces.toggleWhite.GetComponent<Toggle>().isOn = false;
         }
-        pieces.toggleWhite.SetActive(whiteActive);
-        pieces.toggleBlack.SetActive(blackActive);
+        pieces.panelChooseColour.SetActive(false);
     }
 
     [PunRPC]

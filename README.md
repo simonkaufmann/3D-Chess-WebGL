@@ -20,6 +20,11 @@ https://www.turbosquid.com/FullPreview/Index.cfm/ID/1408325
 https://github.com/dantasulisses/WebMobileInputFix  
 https://forum.unity.com/threads/keyboard-input-webgl-mobile.505193/  
 
+## Attributions
+
+3D model of chess board created by user **usman039**  
+https://www.turbosquid.com/FullPreview/Index.cfm/ID/1408325  
+
 ## Notes
 
 If cloned from git, the first start with Unity takes longer since the Library folder has

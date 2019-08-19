@@ -179,8 +179,17 @@ public class UI : MonoBehaviour
         {
             PhotonView photonView = gameObject.GetComponent<PhotonView>();
             Pieces pieces = gameObject.GetComponent<Pieces>();
+            Language lang = gameObject.GetComponent<Language>();
 
-            pieces.txtWaitForPlayerRoomName.GetComponent<Text>().text = "Spielname: " + room.Name;
+            if (lang.language == Language.GERMAN)
+            {
+                pieces.txtWaitForPlayerRoomName.GetComponent<Text>().text = "Spielname: " + room.Name;
+            }
+            else
+            {
+                pieces.txtWaitForPlayerRoomName.GetComponent<Text>().text = "Room name: " + room.Name;
+            }
+
 
             Player[] players = PhotonNetwork.PlayerListOthers;
             if (pieces.player == Field.WHITE)

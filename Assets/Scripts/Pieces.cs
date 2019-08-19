@@ -1976,7 +1976,7 @@ public class Pieces : MonoBehaviour
             return true;
         } else
         {
-            turnAllCentreTextsOff();
+            turnAllCentreTextsOff(panelChooseColour);
             panelChooseColour.SetActive(true);
             buttonGiveUp.SetActive(false);
             return false;
@@ -2003,6 +2003,7 @@ public class Pieces : MonoBehaviour
     {
         if (gameEnded)
         {
+            buttonGiveUp.SetActive(false);
             if (wonCheckmate)
             {
                 turnAllCentreTextsOff();
@@ -2036,9 +2037,8 @@ public class Pieces : MonoBehaviour
         }
     }
 
-    public void turnAllCentreTextsOff()
+    public void turnAllCentreTextsOff(bool withAll)
     {
-        panelChooseColour.SetActive(false);
         panelLoad.SetActive(false);
         panelCheck.SetActive(false);
         panelCheckmate.SetActive(false);
@@ -2047,8 +2047,36 @@ public class Pieces : MonoBehaviour
         panelWonCheckmate.SetActive(false);
         panelWonGivenUp.SetActive(false);
         panelDraw.SetActive(false);
-        panelRestart.SetActive(false);
-        panelGiveUp.SetActive(false);
+        panelLostGivenUp.SetActive(false);
+        if (withAll)
+        {
+            panelChooseColour.SetActive(false);
+            panelRestart.SetActive(false);
+            panelGiveUp.SetActive(false);
+        }
+    }
+
+    public void  turnAllCentreTextsOff()
+    {
+        turnAllCentreTextsOff(true);
+    }
+
+    public void turnAllCentreTextsOff(GameObject without)
+    {
+        // Necessary to not trun off panels with buttons because otherweise buttons will not respond
+        turnAllCentreTextsOff(false);
+        if (!Object.ReferenceEquals(without, panelRestart))
+        {
+            panelRestart.SetActive(false);
+        }
+        if (!Object.ReferenceEquals(without, panelGiveUp))
+        {
+            panelGiveUp.SetActive(false);
+        }
+        if (!Object.ReferenceEquals(without, panelChooseColour))
+        {
+            panelChooseColour.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -2083,7 +2111,7 @@ public class Pieces : MonoBehaviour
 
         if (restartDialog)
         {
-            turnAllCentreTextsOff();
+            turnAllCentreTextsOff(panelRestart);
             panelRestart.SetActive(true);
             return;
         } else
@@ -2093,7 +2121,7 @@ public class Pieces : MonoBehaviour
 
         if (giveUpDialog)
         {
-            turnAllCentreTextsOff();
+            turnAllCentreTextsOff(panelGiveUp);
             panelGiveUp.SetActive(true);
             return;
         }
@@ -2105,6 +2133,7 @@ public class Pieces : MonoBehaviour
         if (!roomFull)
         {
             turnAllCentreTextsOff();
+            buttonGiveUp.SetActive(false);
             panelWaitForPlayer.SetActive(true);
             return;
         }
