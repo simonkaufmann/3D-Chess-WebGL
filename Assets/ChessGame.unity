@@ -4750,7 +4750,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "M\xF6chten Sie aufgeben?"
+  m_Text: "M\xF6chten Sie das Spiel aufgeben?"
 --- !u!222 &915681063
 CanvasRenderer:
   m_ObjectHideFlags: 0

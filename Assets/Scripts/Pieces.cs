@@ -1274,6 +1274,7 @@ public class Pieces : MonoBehaviour
         {
             selectedField = null;
             highlight2Fields(null);
+            highlight2Pieces(null);
             highlight4Field(null);
             highlight4Piece(null);
             return;
