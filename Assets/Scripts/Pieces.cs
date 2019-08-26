@@ -1280,6 +1280,9 @@ public class Pieces : MonoBehaviour
             return;
         }
 
+        highlightField(f);
+        highlightPiece(f);
+
         if (f.player != Field.EMPTY)
         {
             selectedField = f;
@@ -2234,14 +2237,14 @@ public class Pieces : MonoBehaviour
                         {
                             restSendMove();
                         }
+                        selectField(null);
                     }
                     else
                     {
                         Field fPiece = getFieldByPiece();
+                        selectField(null);
                         selectField(fPiece);
                     }
-
-                    selectField(null);
                 }
             }
             else
