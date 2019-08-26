@@ -551,13 +551,13 @@ public class Pieces : MonoBehaviour
 
     void highlight2Pieces(List<Field> fs)
     {
-        foreach (Field field in fields)
+        foreach (Piece p in whitePieces)
         {
-            Piece p = getPiece(field);
-            if (p != null)
-            {
-                p.highlight2 = false;
-            }
+            p.highlight2 = false;
+        }
+        foreach (Piece p in blackPieces)
+        {
+            p.highlight2 = false;
         }
         if (fs == null)
         {
@@ -1274,7 +1274,7 @@ public class Pieces : MonoBehaviour
         {
             selectedField = null;
             highlight2Fields(null);
-            highlight2Pieces(null);
+            //highlight2Pieces(null);
             highlight4Field(null);
             highlight4Piece(null);
             return;
@@ -1289,7 +1289,7 @@ public class Pieces : MonoBehaviour
         {
             List<Field> fs = getMoves(fields, f);
             highlight2Fields(fs);
-            highlight2Pieces(fs);
+            //highlight2Pieces(fs);
         }
     }
 
@@ -2234,6 +2234,11 @@ public class Pieces : MonoBehaviour
                         {
                             restSendMove();
                         }
+                    }
+                    else
+                    {
+                        Field fPiece = getFieldByPiece();
+                        selectField(fPiece);
                     }
 
                     selectField(null);
