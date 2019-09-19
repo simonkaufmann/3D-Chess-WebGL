@@ -1014,6 +1014,31 @@ public class Pieces : MonoBehaviour
         return isKingField;
     }
 
+    bool canCastleBig(int player)
+    {
+        if (player == Field.WHITE)
+        {
+            return (whiteCastlingBig && !isCheck(fields, Field.WHITE));
+        } else if (player == Field.BLACK)
+        {
+            return (blackCastlingBig && !isCheck(fields, Field.BLACK));
+        }
+        return false;
+    }
+
+    bool canCastleSmall(int player)
+    {
+        if (player == Field.WHITE)
+        {
+            return (whiteCastlingSmall && !isCheck(fields, Field.WHITE));
+        }
+        else if (player == Field.BLACK)
+        {
+            return (blackCastlingSmall  && !isCheck(fields, Field.BLACK));
+        }
+        return false;
+    }
+
     List<Field> getKingMoves(Field[,] fields, int player, Field f)
     {
         List<Field> fs = new List<Field>();
@@ -1085,7 +1110,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        if (player == Field.WHITE && whiteCastlingBig)
+        if (player == Field.WHITE && canCastleBig(Field.WHITE))
         {
             if (fields[1, 0].player == Field.EMPTY && fields[2, 0].player == Field.EMPTY && fields[3, 0].player == Field.EMPTY)
             {
@@ -1093,7 +1118,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        if (player == Field.WHITE && whiteCastlingSmall)
+        if (player == Field.WHITE && canCastleSmall(Field.WHITE))
         {
             if (fields[5, 0].player == Field.EMPTY && fields[6, 0].player == Field.EMPTY)
             {
@@ -1101,7 +1126,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        if (player == Field.BLACK && blackCastlingBig)
+        if (player == Field.BLACK && canCastleBig(Field.BLACK))
         {
             if (fields[1, 7].player == Field.EMPTY && fields[2, 7].player == Field.EMPTY && fields[3, 7].player == Field.EMPTY)
             {
@@ -1109,7 +1134,7 @@ public class Pieces : MonoBehaviour
             }
         }
 
-        if (player == Field.BLACK && blackCastlingSmall)
+        if (player == Field.BLACK && canCastleSmall(Field.BLACK))
         {
             if (fields[5, 7].player == Field.EMPTY && fields[6, 7].player == Field.EMPTY)
             {
@@ -1498,19 +1523,6 @@ public class Pieces : MonoBehaviour
 
     void checkKingMoved()
     {
-
-        if (isCheck(fields, Field.WHITE))
-        {
-            whiteCastlingBig = false;
-            whiteCastlingSmall = false;
-        }
-
-        if (isCheck(fields, Field.BLACK))
-        {
-            blackCastlingBig = false;
-            blackCastlingSmall = false;
-        }
-
         if (fields[4, 0].player != Field.WHITE || pieceIsType(getPiece(fields[4, 0]), "King") == false)
         {
             whiteCastlingBig = false;
@@ -1740,22 +1752,22 @@ public class Pieces : MonoBehaviour
 
     void checkCastling(Field f)
     {
-        if (whiteCastlingBig && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
+        if (canCastleBig(Field.WHITE) && f.row == 0 && f.col == 2 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[0, 0], fields[3, 0]);
         }
 
-        if (whiteCastlingSmall && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
+        if (canCastleSmall(Field.WHITE) && f.row == 0 && f.col == 6 && selectedField.player == Field.WHITE && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[7, 0], fields[5, 0]);
         }
 
-        if (blackCastlingBig && f.row == 7 && f.col == 2 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
+        if (canCastleBig(Field.BLACK) && f.row == 7 && f.col == 2 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[0, 7], fields[3, 7]);
         }
 
-        if (blackCastlingSmall && f.row == 7 && f.col == 6 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
+        if (canCastleSmall(Field.BLACK) && f.row == 7 && f.col == 6 && selectedField.player == Field.BLACK && pieceIsType(getPiece(selectedField), "King"))
         {
             movePiece(fields[7, 7], fields[5, 7]);
         }
@@ -2110,6 +2122,7 @@ public class Pieces : MonoBehaviour
             panelRoomSelection.SetActive(false);
         }
 
+        // Once we reach that status point panelTurn should be activated
         panelTurn.SetActive(true);
 
         if (restartDialog)
@@ -2181,10 +2194,13 @@ public class Pieces : MonoBehaviour
             Field f = getFieldByPiece();
             highlightField(f);
             highlightPiece(f);
+            // No field found
             if (f == null)
             {
                 Piece p = getPieceByPiece();
-                highlightPiece(p);
+                highlightPiece(p); // colour piece
+
+                // for pawn promotion
                 if (fieldPawnPromotion != null && Input.GetMouseButtonDown(0))
                 {
                     if (p != null)
@@ -2196,6 +2212,7 @@ public class Pieces : MonoBehaviour
                     }
                 }
             }
+            // Field clicked
             if (f != null)
             {
                 if (Input.GetMouseButtonDown(0) && turn == player)
@@ -2209,6 +2226,7 @@ public class Pieces : MonoBehaviour
                     }
                     else
                     {
+                        // Select field if it is from same player
                         if (f.player == player && fieldPawnPromotion == null)
                         {
                             selectField(f);
@@ -2243,7 +2261,10 @@ public class Pieces : MonoBehaviour
                     {
                         Field fPiece = getFieldByPiece();
                         selectField(null);
-                        selectField(fPiece);
+                        if (fPiece.player == player && fieldPawnPromotion == null)
+                        {
+                            selectField(fPiece);
+                        }
                     }
                 }
             }

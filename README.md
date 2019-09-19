@@ -30,3 +30,9 @@ https://www.turbosquid.com/FullPreview/Index.cfm/ID/1408325
 If cloned from git, the first start with Unity takes longer since the Library folder has
 to be created by Unity. If the chessboard is not shown, click `File -> Open Scene` and
 open the ChessGame.unity file.
+
+Current version connects to Photon EU region automatically instead of selecting the fastest
+available region. This is to allow all players using the game to play together independent
+from where they are located (read up on https://doc.photonengine.com/en-us/realtime/current/connection-and-authentication/regions).
+To change this setting in the Unity Editor, click on **Window -> Photon Unity Networking** and then
+set in the **Inspector** the **Fixed Region**.

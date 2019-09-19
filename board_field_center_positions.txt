@@ -1,0 +1,21 @@
+Board Field Center Positions:
+
+Used for positioning the chess board labels
+
+---------
+
+X Position:
+-44.03125, -31.69375, -19.35625, -7.01875, 5.31875, 17.65625, 29.99375, 42.33125
+
+Left Edge: -50.2
+Field Width: 12.3375
+Field Width by 2: 6.16875
+
+---------
+
+Y Position:
+-49.325, -36.975, -24.625, -12.275, 0.075, 12.425, 24.775, 37.125
+
+Bottom Edge: -55.5
+Field Height: 12.35
+Field Height by 2: 6.175
