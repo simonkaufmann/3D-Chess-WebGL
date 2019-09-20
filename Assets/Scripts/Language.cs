@@ -63,6 +63,8 @@ public class Language : MonoBehaviour
     GameObject txtLostGivenUpEnglish;
     GameObject txtChooseColourGerman;
     GameObject txtChooseColourEnglish;
+    GameObject buttonSendGerman;
+    GameObject buttonSendEnglish;
     void Awake()
     {
         txtTurnGerman = GameObject.Find("txtTurnGerman");
@@ -120,6 +122,8 @@ public class Language : MonoBehaviour
         txtLostGivenUpEnglish = GameObject.Find("txtLostGivenUpEnglish");
         txtChooseColourGerman = GameObject.Find("txtChooseColourGerman");
         txtChooseColourEnglish = GameObject.Find("txtChooseColourEnglish");
+        buttonSendGerman = GameObject.Find("buttonSendGerman");
+        buttonSendEnglish = GameObject.Find("buttonSendEnglish");
     }
 
     // Update is called once per frame
@@ -181,6 +185,8 @@ public class Language : MonoBehaviour
             txtLostGivenUpEnglish.SetActive(false);
             txtChooseColourGerman.SetActive(true);
             txtChooseColourEnglish.SetActive(false);
+            buttonSendGerman.SetActive(true);
+            buttonSendEnglish.SetActive(false);
         } else
         {
             txtTurnGerman.SetActive(false);
@@ -237,6 +243,8 @@ public class Language : MonoBehaviour
             txtLostGivenUpEnglish.SetActive(true);
             txtChooseColourGerman.SetActive(false);
             txtChooseColourEnglish.SetActive(true);
+            buttonSendGerman.SetActive(false);
+            buttonSendEnglish.SetActive(true);
         }
     }
 }
