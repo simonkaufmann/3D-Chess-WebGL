@@ -959,10 +959,7 @@ public class Pieces : MonoBehaviour
         }
 
         int kingFieldPlayer = kingPosition.player;
-        if (kingPosition != null)
-        {
-            kingPosition.player = Field.EMPTY; // We need to check moves while assuming king is not there
-        }
+        kingPosition.player = Field.EMPTY; // We need to check moves while assuming king is not there, otherwise function breaks
 
         bool isKingField = false;
 
@@ -1019,13 +1016,32 @@ public class Pieces : MonoBehaviour
 
     bool canCastleBig(int player)
     {
+        Field whiteKing = null, blackKing = null;
+        foreach (Field f in fields)
+        {
+            Piece p = getPiece(f);
+            if (p != null)
+            {
+                if (pieceIsType(p, "King"))
+                {
+                    if (f.player == Field.WHITE)
+                    {
+                        whiteKing = f;
+                    } else if (f.player == Field.BLACK)
+                    {
+                        blackKing = f;
+                    }
+                }
+            }
+        }
+
         if (player == Field.WHITE)
         {
             if (!(fields[1, 0].player == Field.EMPTY) || !(fields[2, 0].player == Field.EMPTY) || !(fields[3, 0].player == Field.EMPTY))
             {
                 return false; // check whether fields are free
             }
-            if (!validKingField(fields, Field.WHITE, null, fields[1, 0]) || !validKingField(fields, Field.WHITE, null, fields[2, 0]) || !validKingField(fields, Field.WHITE, null, fields[3, 0]))
+            if (!validKingField(fields, Field.WHITE, whiteKing, fields[1, 0]) || !validKingField(fields, Field.WHITE, whiteKing, fields[2, 0]) || !validKingField(fields, Field.WHITE, whiteKing, fields[3, 0]))
             {
                 return false; // check whether none of the fields is in check
             }
@@ -1036,7 +1052,7 @@ public class Pieces : MonoBehaviour
             {
                 return false; // check whether fields are free
             }
-            if (!validKingField(fields, Field.BLACK, null, fields[1, 7]) || !validKingField(fields, Field.BLACK, null, fields[2, 7]) || !validKingField(fields, Field.BLACK, null, fields[3, 7]))
+            if (!validKingField(fields, Field.BLACK, blackKing, fields[1, 7]) || !validKingField(fields, Field.BLACK, blackKing, fields[2, 7]) || !validKingField(fields, Field.BLACK, blackKing, fields[3, 7]))
             {
                 return false; // check whether none of the fields is in check
             }
@@ -1047,13 +1063,33 @@ public class Pieces : MonoBehaviour
 
     bool canCastleSmall(int player)
     {
+        Field whiteKing = null, blackKing = null;
+        foreach (Field f in fields)
+        {
+            Piece p = getPiece(f);
+            if (p != null)
+            {
+                if (pieceIsType(p, "King"))
+                {
+                    if (f.player == Field.WHITE)
+                    {
+                        whiteKing = f;
+                    }
+                    else if (f.player == Field.BLACK)
+                    {
+                        blackKing = f;
+                    }
+                }
+            }
+        }
+
         if (player == Field.WHITE)
         {
             if (!(fields[5, 0].player == Field.EMPTY) || !(fields[6, 0].player == Field.EMPTY))
             {
                 return false; // check whether fields are free
             }
-            if (!validKingField(fields, Field.WHITE, null, fields[5, 0]) || !validKingField(fields, Field.WHITE, null, fields[6, 0]))
+            if (!validKingField(fields, Field.WHITE, whiteKing, fields[5, 0]) || !validKingField(fields, Field.WHITE, whiteKing, fields[6, 0]))
             {
                 return false; // check whether none of the fields is in check
             }
@@ -1065,7 +1101,7 @@ public class Pieces : MonoBehaviour
             {
                 return false; // check whether fields are free
             }
-            if (!validKingField(fields, Field.BLACK, null, fields[5, 7]) || !validKingField(fields, Field.BLACK, null, fields[6, 7]))
+            if (!validKingField(fields, Field.BLACK, blackKing, fields[5, 7]) || !validKingField(fields, Field.BLACK, blackKing, fields[6, 7]))
             {
                 return false; // check whether none of the fields is in check
             }
