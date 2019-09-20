@@ -959,7 +959,10 @@ public class Pieces : MonoBehaviour
         }
 
         int kingFieldPlayer = kingPosition.player;
-        kingPosition.player = Field.EMPTY; // We need to check moves while assuming king is not there
+        if (kingPosition != null)
+        {
+            kingPosition.player = Field.EMPTY; // We need to check moves while assuming king is not there
+        }
 
         bool isKingField = false;
 
@@ -1018,9 +1021,25 @@ public class Pieces : MonoBehaviour
     {
         if (player == Field.WHITE)
         {
+            if (!(fields[1, 0].player == Field.EMPTY) || !(fields[2, 0].player == Field.EMPTY) || !(fields[3, 0].player == Field.EMPTY))
+            {
+                return false; // check whether fields are free
+            }
+            if (!validKingField(fields, Field.WHITE, null, fields[1, 0]) || !validKingField(fields, Field.WHITE, null, fields[2, 0]) || !validKingField(fields, Field.WHITE, null, fields[3, 0]))
+            {
+                return false; // check whether none of the fields is in check
+            }
             return (whiteCastlingBig && !isCheck(fields, Field.WHITE));
         } else if (player == Field.BLACK)
         {
+            if (!(fields[1, 7].player == Field.EMPTY) || !(fields[2, 7].player == Field.EMPTY) || !(fields[3, 7].player == Field.EMPTY))
+            {
+                return false; // check whether fields are free
+            }
+            if (!validKingField(fields, Field.BLACK, null, fields[1, 7]) || !validKingField(fields, Field.BLACK, null, fields[2, 7]) || !validKingField(fields, Field.BLACK, null, fields[3, 7]))
+            {
+                return false; // check whether none of the fields is in check
+            }
             return (blackCastlingBig && !isCheck(fields, Field.BLACK));
         }
         return false;
@@ -1030,10 +1049,26 @@ public class Pieces : MonoBehaviour
     {
         if (player == Field.WHITE)
         {
+            if (!(fields[5, 0].player == Field.EMPTY) || !(fields[6, 0].player == Field.EMPTY))
+            {
+                return false; // check whether fields are free
+            }
+            if (!validKingField(fields, Field.WHITE, null, fields[5, 0]) || !validKingField(fields, Field.WHITE, null, fields[6, 0]))
+            {
+                return false; // check whether none of the fields is in check
+            }
             return (whiteCastlingSmall && !isCheck(fields, Field.WHITE));
         }
         else if (player == Field.BLACK)
         {
+            if (!(fields[5, 7].player == Field.EMPTY) || !(fields[6, 7].player == Field.EMPTY))
+            {
+                return false; // check whether fields are free
+            }
+            if (!validKingField(fields, Field.BLACK, null, fields[5, 7]) || !validKingField(fields, Field.BLACK, null, fields[6, 7]))
+            {
+                return false; // check whether none of the fields is in check
+            }
             return (blackCastlingSmall  && !isCheck(fields, Field.BLACK));
         }
         return false;
@@ -1112,34 +1147,22 @@ public class Pieces : MonoBehaviour
 
         if (player == Field.WHITE && canCastleBig(Field.WHITE))
         {
-            if (fields[1, 0].player == Field.EMPTY && fields[2, 0].player == Field.EMPTY && fields[3, 0].player == Field.EMPTY)
-            {
-                fs.Add(fields[2, 0]);
-            }
+            fs.Add(fields[2, 0]);
         }
 
         if (player == Field.WHITE && canCastleSmall(Field.WHITE))
         {
-            if (fields[5, 0].player == Field.EMPTY && fields[6, 0].player == Field.EMPTY)
-            {
-                fs.Add(fields[6, 0]);
-            }
+            fs.Add(fields[6, 0]);
         }
 
         if (player == Field.BLACK && canCastleBig(Field.BLACK))
         {
-            if (fields[1, 7].player == Field.EMPTY && fields[2, 7].player == Field.EMPTY && fields[3, 7].player == Field.EMPTY)
-            {
-                fs.Add(fields[2, 7]);
-            }
+            fs.Add(fields[2, 7]);
         }
 
         if (player == Field.BLACK && canCastleSmall(Field.BLACK))
         {
-            if (fields[5, 7].player == Field.EMPTY && fields[6, 7].player == Field.EMPTY)
-            {
-                fs.Add(fields[6, 7]);
-            }
+            fs.Add(fields[6, 7]);
         }
 
         return fs;
