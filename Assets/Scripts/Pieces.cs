@@ -600,7 +600,7 @@ public class Pieces : MonoBehaviour
                     }
                 }
 
-                if (col - 1 > 0)
+                if (col - 1 >= 0)
                 {
                     if (fields[col - 1, row + 1].player == Field.BLACK || threatened)
                     {
@@ -635,7 +635,7 @@ public class Pieces : MonoBehaviour
                     }
                 }
 
-                if (col - 1 > 0)
+                if (col - 1 >= 0)
                 {
                     if (fields[col - 1, row - 1].player == Field.WHITE || threatened)
                     {
